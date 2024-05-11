@@ -146,9 +146,9 @@ fun MyBottomNavigation(navController: NavHostController) {
                 Icon(
                     painter = painterResource(
                         id = if (selectedItem == "MyFlights") {
-                            R.drawable.ic_launcher_background //cambiar por icono de avión relleno
+                            R.drawable.filled_plane //cambiar por icono de avión relleno
                         } else {
-                            R.drawable.ic_launcher_foreground // cambiar por icono de avion outlined
+                            R.drawable.outlined_plane // cambiar por icono de avion outlined
                         }
                     ),
                     contentDescription = "MyFlights",
@@ -187,9 +187,9 @@ fun MyBottomNavigation(navController: NavHostController) {
                 Icon(
                     painter = painterResource(
                         id = if (selectedItem == "Search") {
-                            R.drawable.filled_home // cambiar por icono de busqueda filled
+                            R.drawable.filled_search // cambiar por icono de busqueda filled
                         } else {
-                            R.drawable.outlined_home //cambiar por icono de busqueda outlined
+                            R.drawable.outlined_search //cambiar por icono de busqueda outlined
                         }
                     ),
                     contentDescription = "Search",
