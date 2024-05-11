@@ -9,6 +9,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
@@ -152,10 +153,16 @@ fun MyBottomNavigation(navController: NavHostController) {
                         }
                     ),
                     contentDescription = "MyFlights",
-                    tint = Color.White
+                    tint = Color.White,
+                    modifier = if(selectedItem == "MyFlights") {
+                        Modifier.size(65.dp)
+                    } else {
+                        Modifier.size(40.dp)
+                    }
                 )
-            },
-            label = { Text("MyFlights", color = Color.White) })
+            }
+            //label = { Text("MyFlights", color = Color.White) }
+        )
         BottomNavigationItem(
             selected = selectedItem == "Home",
             onClick = {
@@ -172,11 +179,16 @@ fun MyBottomNavigation(navController: NavHostController) {
                         }
                     ),
                     contentDescription = "Home",
-                    tint = Color.White
+                    tint = Color.White,
+                    modifier = if(selectedItem == "Home") {
+                        Modifier.size(50.dp)
+                    } else {
+                        Modifier.size(40.dp)
+                    }
                 )
-            },
-            label = { Text("Home", color = Color.White) })
-
+            }
+            //label = { Text("Home", color = Color.White) }
+        )
         BottomNavigationItem(
             selected = selectedItem == "Search",
             onClick = {
@@ -193,9 +205,15 @@ fun MyBottomNavigation(navController: NavHostController) {
                         }
                     ),
                     contentDescription = "Search",
-                    tint = Color.White
+                    tint = Color.White,
+                    modifier = if(selectedItem == "Search") {
+                        Modifier.size(40.dp)
+                    } else {
+                        Modifier.size(30.dp)
+                    }
                 )
-            },
-            label = { Text("Search", color = Color.White) })
+            }
+            //label = { Text("Search", color = Color.White) }
+        )
     }
 }
