@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.skycab.R
+import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
 
@@ -35,7 +36,7 @@ import com.example.skycab.ui.theme.text
 @Composable
 fun Login(
     navController: NavController,
-    //userViewModel: UserViewModel,
+    userViewModel: UserViewModel,
 ) {
 
     Column(
@@ -75,7 +76,7 @@ fun Login(
         )
         Row(modifier = Modifier.padding(15.dp)) {
             Button(onClick = {
-                navController.navigate("Home")
+                navController.navigate("HomePrelogin")
             }) {
                 Text(text = "Cancel")
             }
@@ -83,19 +84,19 @@ fun Login(
             Button(onClick = {
                 if (emailInput.isNotEmpty()) {
                     if (passwordInput.isNotEmpty()) {
-                        /*
+
                         userViewModel.signWithEmailAndPassword(
                             emailInput,
                             passwordInput,
                             context
                         ) { logged ->
                             if (logged) {
-                                navController.navigate("Home")
+                                navController.navigate("HomePostlogin")
                             } else {
                                 passwordInput = ""
                             }
                         }
-                         */
+
                     } else {
                         Toast.makeText(
                             context,

@@ -10,9 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
-import androidx.compose.material3.FloatingActionButtonDefaults.elevation
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,38 +29,37 @@ import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
 
 @Composable
-fun Home(
+fun HomePrelogin(
     navController: NavController,
-    //userViewModel: UserViewModel,
+    userViewModel: UserViewModel,
 ) {
 
     LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-        //item { HomeScreen(navController, userViewModel) }
-        item { HomeScreen(navController) }
+        item { HomePreloginScreen(navController, userViewModel) }
     }
 
 }
 
 @Composable
-fun HomeScreen(
+fun HomePreloginScreen(
     navController: NavController,
-    //userViewModel: UserViewModel,
+    userViewModel: UserViewModel,
 ) {
 
     var logged by remember { mutableStateOf(false) }
-    /*
+
     if (userViewModel.auth.currentUser != null) {
         logged = true
     }
-*/
+
     var user by remember { mutableStateOf("") }
-/*
+
     if (logged) {
         userViewModel.getUser {
             user = it
         }
     }
-*/
+
 
     Column(
         modifier = Modifier
@@ -99,10 +95,11 @@ fun HomeScreen(
                     Text(text = "Register", fontSize = 20.sp)
                 }
             }
-        } else {
+        }  //TODO LOGOUT
+        else {
             val context = LocalContext.current
             Button(onClick = {
-                //userViewModel.auth.signOut()
+                userViewModel.auth.signOut()
                 user = "User"
                 logged = !logged
                 Toast.makeText(

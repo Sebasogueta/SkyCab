@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
 
@@ -26,7 +27,7 @@ import com.example.skycab.ui.theme.text
 @Composable
 fun Search(
     navController: NavHostController,
-    //userViewModel: UserViewModel,
+    userViewModel: UserViewModel,
     //cityViewModel: CityViewModel,
 ) {
     //val weatherViewModel: WeatherViewModel = viewModel()
@@ -46,7 +47,7 @@ fun Search(
                 )
             }
             //item { WeatherInfo(userViewModel, cityInput, weatherViewModel) }
-            item { WeatherInfo() }
+            item { WeatherInfo(userViewModel) }
         }
 
     }
@@ -57,16 +58,16 @@ fun Search(
 @SuppressLint("SuspiciousIndentation", "UnrememberedMutableState")
 @Composable
 fun WeatherInfo(
-    //userViewModel: UserViewModel,
+    userViewModel: UserViewModel,
     //cityParameter: String,
     //weatherViewModel: WeatherViewModel
 ) {
 
     var logged by remember { mutableStateOf(false) }
-    /*
+
     if (userViewModel.auth.currentUser != null) {
         logged = true
     }
-     */
+
     Text(text = "Search")
 }

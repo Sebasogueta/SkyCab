@@ -3,23 +3,16 @@ package com.example.skycab
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,7 +22,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -38,7 +30,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.SkyCabTheme
-import com.example.skycab.view.Home
+import com.example.skycab.view.HomePostlogin
+import com.example.skycab.view.HomePrelogin
 import com.example.skycab.view.Login
 import com.example.skycab.view.MyFlights
 import com.example.skycab.view.Register
@@ -52,7 +45,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             val navController = rememberNavController()
-            //val userViewModel: UserViewModel = viewModel()
+            val userViewModel: UserViewModel = viewModel()
 
             var isLoading by remember { mutableStateOf(true) }
             LaunchedEffect(Unit) {
@@ -63,7 +56,7 @@ class MainActivity : ComponentActivity() {
             SkyCabTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    bottomBar = { MyBottomNavigation(navController) }
+                    bottomBar = { MyBottomNavigation(navController, userViewModel) }
                 )
                 {
                     Box(
@@ -86,38 +79,44 @@ class MainActivity : ComponentActivity() {
                         }
 
                         NavHost(
-                                navController = navController, startDestination = "Home"
-                            ) {
+                            navController = navController, startDestination = "HomePrelogin"
+                        ) {
                             composable("MyFlights") {
                                 MyFlights(
                                     navController = navController,
-                                    //userViewModel
+                                    userViewModel
                                 )
                             }
-                            composable("Home") {
-                                Home(
+                            composable("HomePrelogin") {
+                                HomePrelogin(
                                     navController = navController,
-                                    //userViewModel
+                                    userViewModel
+                                )
+                            }
+                            composable("HomePostlogin") {
+                                HomePostlogin(
+                                    navController = navController,
+                                    userViewModel
                                 )
                             }
                             composable("Search") {
                                 Search(
                                     navController = navController,
-                                    //userViewModel
+                                    userViewModel
                                 )
                             }
 
                             composable("Login") {
                                 Login(
                                     navController = navController,
-                                    //userViewModel
+                                    userViewModel
                                 )
                             }
 
                             composable("Register") {
                                 Register(
                                     navController = navController,
-                                    //userViewModel
+                                    userViewModel
                                 )
                             }
 
@@ -130,7 +129,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun MyBottomNavigation(navController: NavHostController) {
+fun MyBottomNavigation(navController: NavHostController, userViewModel: UserViewModel) {
 
     var selectedItem by remember { mutableStateOf("Home") }
 
@@ -154,7 +153,7 @@ fun MyBottomNavigation(navController: NavHostController) {
                     ),
                     contentDescription = "MyFlights",
                     tint = Color.White,
-                    modifier = if(selectedItem == "MyFlights") {
+                    modifier = if (selectedItem == "MyFlights") {
                         Modifier.size(65.dp)
                     } else {
                         Modifier.size(40.dp)
@@ -167,7 +166,11 @@ fun MyBottomNavigation(navController: NavHostController) {
             selected = selectedItem == "Home",
             onClick = {
                 selectedItem = "Home"
-                navController.navigate("Home")
+                if (userViewModel.auth.currentUser != null) {
+                    navController.navigate("HomePostlogin")
+                } else {
+                    navController.navigate("HomePrelogin")
+                }
             },
             icon = {
                 Icon(
@@ -180,7 +183,7 @@ fun MyBottomNavigation(navController: NavHostController) {
                     ),
                     contentDescription = "Home",
                     tint = Color.White,
-                    modifier = if(selectedItem == "Home") {
+                    modifier = if (selectedItem == "Home") {
                         Modifier.size(50.dp)
                     } else {
                         Modifier.size(40.dp)
@@ -206,7 +209,7 @@ fun MyBottomNavigation(navController: NavHostController) {
                     ),
                     contentDescription = "Search",
                     tint = Color.White,
-                    modifier = if(selectedItem == "Search") {
+                    modifier = if (selectedItem == "Search") {
                         Modifier.size(40.dp)
                     } else {
                         Modifier.size(30.dp)
@@ -216,4 +219,5 @@ fun MyBottomNavigation(navController: NavHostController) {
             //label = { Text("Search", color = Color.White) }
         )
     }
+
 }

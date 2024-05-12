@@ -32,6 +32,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.FontText
 import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.background
@@ -43,18 +44,18 @@ import com.example.skycab.ui.theme.text
 @Composable
 fun MyFlights(
     navController: NavHostController,
-    //userViewModel: UserViewModel,
+    userViewModel: UserViewModel,
     //cityViewModel: CityViewModel,
 ) {
 
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
 
         var logged by remember { mutableStateOf(false) }
-        /*
+
         if (userViewModel.auth.currentUser != null) {
             logged = true
         }
-         */
+
 
         Text(text = "Your favorite places!", fontSize = 30.sp, modifier = Modifier.padding(16.dp), color = text, fontFamily = FontTitle)
 
