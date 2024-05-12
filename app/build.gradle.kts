@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -68,11 +69,14 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.7.0-beta02")
 
     //firebase
-    implementation(platform("com.google.firebase:firebase-bom:32.6.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+
     implementation("com.google.firebase:firebase-analytics")
     implementation ("com.google.firebase:firebase-auth")
     implementation ("com.google.firebase:firebase-firestore")
-    implementation("androidx.compose.ui:ui-android:1.5.4")
+
+    //implementation("androidx.compose.ui:ui-android:1.5.4")
+
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

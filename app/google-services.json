@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "534798160609",
+    "project_id": "skycab-f9a80",
+    "storage_bucket": "skycab-f9a80.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:534798160609:android:b76c89a321ede30dd4dda0",
+        "android_client_info": {
+          "package_name": "com.example.skycab"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsmmq9M2fi9ZbVu6oNUIFJXsxJM8z3nj0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
