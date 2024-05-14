@@ -1,8 +1,12 @@
 package com.example.skycab.view
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
@@ -34,18 +38,29 @@ fun Search(
     //var cityInput by remember { mutableStateOf("") }
     //cityInput = cityViewModel.getCity()
     //cityViewModel.setCity("")
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "Search now!",
+                fontSize = 30.sp,
+                modifier = Modifier.padding(16.dp),
+                color = text,
+                fontFamily = FontTitle
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
 
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
-            item {
-                Text(
-                    text = "Search now!",
-                    fontSize = 30.sp,
-                    modifier = Modifier.padding(16.dp),
-                    color = text,
-                    fontFamily = FontTitle
-                )
-            }
             //item { WeatherInfo(userViewModel, cityInput, weatherViewModel) }
             item { WeatherInfo(userViewModel) }
         }

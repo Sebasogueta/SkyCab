@@ -3,6 +3,7 @@ package com.example.skycab.models
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.ui.text.toLowerCase
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -57,7 +58,8 @@ class UserViewModel: ViewModel() {
                     if (task.isSuccessful) {
 
                         val currentUser = auth.currentUser
-                        val newUser = User(username, mutableListOf()) /* TODO AGREGAR MYFLIGHTS */
+                        //val newUser = User(username, mutableListOf(), "") /* TODO AGREGAR MYFLIGHTS */
+                        val newUser = User(username, "") /* TODO AGREGAR MYFLIGHTS */
 
                         // Verificar si el usuario ya tiene un documento en Firestore
                         currentUser?.uid?.let { userId ->
@@ -124,7 +126,7 @@ class UserViewModel: ViewModel() {
                 for (document in task.result) {
                     val userData = document.toObject(User::class.java)
                     userData?.let { user ->
-                        if (username.equals(user.username)) {
+                        if (username.lowercase().equals(user.username.lowercase())) {
                             result2 = true //user already exists
                         }
                     }

@@ -4,7 +4,10 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -53,21 +56,34 @@ fun HomePreloginScreen(
     }
 
     var user by remember { mutableStateOf("") }
-/*
-    if (logged) {
-        userViewModel.getUser {
-            user = it
-        }
-    }*/
 
+        if (logged) {
+            userViewModel.getUser {
+                user = it
+            }
+        }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "SkyCab",
+                fontSize = 35.sp,
+                modifier = Modifier.padding(16.dp),
+                color = text,
+                fontFamily = FontTitle
+            )
+            Spacer(modifier = Modifier.weight(1f))
+        }
         Image(
             painterResource(id = R.drawable.homephoto), /* TODO CAMBIAR FOTO */
             contentDescription = "Home Photo",
@@ -80,21 +96,21 @@ fun HomePreloginScreen(
             fontFamily = FontTitle
         )
 
-        if (!logged) {
-            Column(modifier = Modifier.padding(15.dp)) {
-                Button(onClick = {
+        Column(modifier = Modifier.padding(15.dp)) {
+            Button(
+                onClick = {
                     navController.navigate("Login")
                 },
-                    modifier = Modifier.width(150.dp)
-                    ) {
-                    Text(text = "Log In", fontSize = 20.sp)
-                }
-                Button(onClick = {
-                    navController.navigate("Register")
-                }, Modifier.width(150.dp)) {
-                    Text(text = "Register", fontSize = 20.sp)
-                }
+                modifier = Modifier.width(150.dp)
+            ) {
+                Text(text = "Log In", fontSize = 20.sp)
             }
+            Button(onClick = {
+                navController.navigate("Register")
+            }, Modifier.width(150.dp)) {
+                Text(text = "Register", fontSize = 20.sp)
+            }
+
         }
     }
 }
