@@ -8,10 +8,21 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-class UserViewModel: ViewModel() { /* TODO REVISAR */
+class UserViewModel: ViewModel() {
 
     val auth: FirebaseAuth = Firebase.auth
+    private val _isLoggedIn = MutableStateFlow(auth.currentUser != null)
+    val isLoggedIn: StateFlow<Boolean> get() = _isLoggedIn
+
+    init {
+        // AuthStateListener para actualizr el StateFlow cuando cambie el estado de auth
+        auth.addAuthStateListener { firebaseAuth ->
+            _isLoggedIn.value = firebaseAuth.currentUser != null
+        }
+    }
 
     fun signWithEmailAndPassword(email: String, password: String, context: Context, result: (Boolean) -> Unit) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->

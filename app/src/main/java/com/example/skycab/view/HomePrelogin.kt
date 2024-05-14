@@ -53,12 +53,12 @@ fun HomePreloginScreen(
     }
 
     var user by remember { mutableStateOf("") }
-
+/*
     if (logged) {
         userViewModel.getUser {
             user = it
         }
-    }
+    }*/
 
 
     Column(
@@ -96,6 +96,7 @@ fun HomePreloginScreen(
                 }
             }
         }  //TODO LOGOUT
+        /*
         else {
             val context = LocalContext.current
             Button(onClick = {
@@ -110,7 +111,7 @@ fun HomePreloginScreen(
             }, modifier = Modifier.padding(15.dp).width(150.dp)) {
                 Text(text = "Log Out", fontSize = 20.sp)
             }
-        }
+        }*/
     }
 }
 

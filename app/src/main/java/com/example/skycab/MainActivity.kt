@@ -76,48 +76,48 @@ class MainActivity : ComponentActivity() {
 
                         // Una vez que isLoading sea falso, mostrar el contenido principal
                         AnimatedVisibility(visible = !isLoading) {
-                        }
 
-                        NavHost(
-                            navController = navController, startDestination = "HomePrelogin"
-                        ) {
-                            composable("MyFlights") {
-                                MyFlights(
-                                    navController = navController,
-                                    userViewModel
-                                )
-                            }
-                            composable("HomePrelogin") {
-                                HomePrelogin(
-                                    navController = navController,
-                                    userViewModel
-                                )
-                            }
-                            composable("HomePostlogin") {
-                                HomePostlogin(
-                                    navController = navController,
-                                    userViewModel
-                                )
-                            }
-                            composable("Search") {
-                                Search(
-                                    navController = navController,
-                                    userViewModel
-                                )
-                            }
+                            NavHost(
+                                navController = navController, startDestination = if (userViewModel.auth.currentUser != null) "HomePostlogin" else "HomePrelogin"
+                            ) {
+                                composable("MyFlights") {
+                                    MyFlights(
+                                        navController = navController,
+                                        userViewModel
+                                    )
+                                }
+                                composable("HomePrelogin") {
+                                    HomePrelogin(
+                                        navController = navController,
+                                        userViewModel
+                                    )
+                                }
+                                composable("HomePostlogin") {
+                                    HomePostlogin(
+                                        navController = navController,
+                                        userViewModel
+                                    )
+                                }
+                                composable("Search") {
+                                    Search(
+                                        navController = navController,
+                                        userViewModel
+                                    )
+                                }
 
-                            composable("Login") {
-                                Login(
-                                    navController = navController,
-                                    userViewModel
-                                )
-                            }
+                                composable("Login") {
+                                    Login(
+                                        navController = navController,
+                                        userViewModel
+                                    )
+                                }
 
-                            composable("Register") {
-                                Register(
-                                    navController = navController,
-                                    userViewModel
-                                )
+                                composable("Register") {
+                                    Register(
+                                        navController = navController,
+                                        userViewModel
+                                    )
+                                }
                             }
 
                         }
@@ -132,92 +132,98 @@ class MainActivity : ComponentActivity() {
 fun MyBottomNavigation(navController: NavHostController, userViewModel: UserViewModel) {
 
     var selectedItem by remember { mutableStateOf("Home") }
+    var isLoggedIn by remember { mutableStateOf(userViewModel.auth.currentUser != null) }
 
-    BottomNavigation(backgroundColor = Color.Blue, contentColor = Color.White) {
-        BottomNavigationItem(
-            selected = selectedItem == "MyFlights",
-            onClick = {
-                selectedItem = "MyFlights"
-                navController.navigate("MyFlights")
-            },
+    // Visualiza cambios en el estado de la autenticación
+    LaunchedEffect(userViewModel.auth) {
+        userViewModel.auth.addAuthStateListener { auth ->
+            isLoggedIn = auth.currentUser != null
+        }
+    }
 
-            icon = {
+    if (isLoggedIn) {
+        BottomNavigation(backgroundColor = Color.Blue, contentColor = Color.White) {
+            BottomNavigationItem(
+                selected = selectedItem == "MyFlights",
+                onClick = {
+                    selectedItem = "MyFlights"
+                    navController.navigate("MyFlights")
+                },
 
-                Icon(
-                    painter = painterResource(
-                        id = if (selectedItem == "MyFlights") {
-                            R.drawable.filled_plane //cambiar por icono de avión relleno
+                icon = {
+
+                    Icon(
+                        painter = painterResource(
+                            id = if (selectedItem == "MyFlights") {
+                                R.drawable.filled_plane //cambiar por icono de avión relleno
+                            } else {
+                                R.drawable.outlined_plane // cambiar por icono de avion outlined
+                            }
+                        ),
+                        contentDescription = "MyFlights",
+                        tint = Color.White,
+                        modifier = if (selectedItem == "MyFlights") {
+                            Modifier.size(65.dp)
                         } else {
-                            R.drawable.outlined_plane // cambiar por icono de avion outlined
+                            Modifier.size(40.dp)
                         }
-                    ),
-                    contentDescription = "MyFlights",
-                    tint = Color.White,
-                    modifier = if (selectedItem == "MyFlights") {
-                        Modifier.size(65.dp)
-                    } else {
-                        Modifier.size(40.dp)
-                    }
-                )
-            }
-            //label = { Text("MyFlights", color = Color.White) }
-        )
-        BottomNavigationItem(
-            selected = selectedItem == "Home",
-            onClick = {
-                selectedItem = "Home"
-                if (userViewModel.auth.currentUser != null) {
-                    navController.navigate("HomePostlogin")
-                } else {
-                    navController.navigate("HomePrelogin")
+                    )
                 }
-            },
-            icon = {
-                Icon(
-                    painter = painterResource(
-                        id = if (selectedItem == "Home") {
-                            R.drawable.filled_home
+                //label = { Text("MyFlights", color = Color.White) }
+            )
+            BottomNavigationItem(
+                selected = selectedItem == "Home",
+                onClick = {
+                    selectedItem = "Home"
+                    navController.navigate("HomePostlogin")
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(
+                            id = if (selectedItem == "Home") {
+                                R.drawable.filled_home
+                            } else {
+                                R.drawable.outlined_home
+                            }
+                        ),
+                        contentDescription = "Home",
+                        tint = Color.White,
+                        modifier = if (selectedItem == "Home") {
+                            Modifier.size(50.dp)
                         } else {
-                            R.drawable.outlined_home
+                            Modifier.size(40.dp)
                         }
-                    ),
-                    contentDescription = "Home",
-                    tint = Color.White,
-                    modifier = if (selectedItem == "Home") {
-                        Modifier.size(50.dp)
-                    } else {
-                        Modifier.size(40.dp)
-                    }
-                )
-            }
-            //label = { Text("Home", color = Color.White) }
-        )
-        BottomNavigationItem(
-            selected = selectedItem == "Search",
-            onClick = {
-                selectedItem = "Search"
-                navController.navigate("Search")
-            },
-            icon = {
-                Icon(
-                    painter = painterResource(
-                        id = if (selectedItem == "Search") {
-                            R.drawable.filled_search // cambiar por icono de busqueda filled
+                    )
+                }
+                //label = { Text("Home", color = Color.White) }
+            )
+            BottomNavigationItem(
+                selected = selectedItem == "Search",
+                onClick = {
+                    selectedItem = "Search"
+                    navController.navigate("Search")
+                },
+                icon = {
+                    Icon(
+                        painter = painterResource(
+                            id = if (selectedItem == "Search") {
+                                R.drawable.filled_search // cambiar por icono de busqueda filled
+                            } else {
+                                R.drawable.outlined_search //cambiar por icono de busqueda outlined
+                            }
+                        ),
+                        contentDescription = "Search",
+                        tint = Color.White,
+                        modifier = if (selectedItem == "Search") {
+                            Modifier.size(40.dp)
                         } else {
-                            R.drawable.outlined_search //cambiar por icono de busqueda outlined
+                            Modifier.size(30.dp)
                         }
-                    ),
-                    contentDescription = "Search",
-                    tint = Color.White,
-                    modifier = if (selectedItem == "Search") {
-                        Modifier.size(40.dp)
-                    } else {
-                        Modifier.size(30.dp)
-                    }
-                )
-            }
-            //label = { Text("Search", color = Color.White) }
-        )
+                    )
+                }
+                //label = { Text("Search", color = Color.White) }
+            )
+        }
     }
 
 }
