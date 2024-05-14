@@ -74,7 +74,7 @@ fun HomePreloginScreen(
             modifier = Modifier.size(500.dp)
         )
         Text(
-            text = if(logged) "Welcome $user!" else "Welcome User!",
+            text = "Welcome User!",
             color = text,
             fontSize = 35.sp,
             fontFamily = FontTitle
@@ -95,23 +95,7 @@ fun HomePreloginScreen(
                     Text(text = "Register", fontSize = 20.sp)
                 }
             }
-        }  //TODO LOGOUT
-        /*
-        else {
-            val context = LocalContext.current
-            Button(onClick = {
-                userViewModel.auth.signOut()
-                user = "User"
-                logged = !logged
-                Toast.makeText(
-                    context,
-                    "You have successfully logged out!",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }, modifier = Modifier.padding(15.dp).width(150.dp)) {
-                Text(text = "Log Out", fontSize = 20.sp)
-            }
-        }*/
+        }
     }
 }
 

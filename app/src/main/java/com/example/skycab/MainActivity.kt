@@ -30,6 +30,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.SkyCabTheme
+import com.example.skycab.view.EditProfile
 import com.example.skycab.view.HomePostlogin
 import com.example.skycab.view.HomePrelogin
 import com.example.skycab.view.Login
@@ -80,14 +81,9 @@ class MainActivity : ComponentActivity() {
                             NavHost(
                                 navController = navController, startDestination = if (userViewModel.auth.currentUser != null) "HomePostlogin" else "HomePrelogin"
                             ) {
+                                //BottomBar
                                 composable("MyFlights") {
                                     MyFlights(
-                                        navController = navController,
-                                        userViewModel
-                                    )
-                                }
-                                composable("HomePrelogin") {
-                                    HomePrelogin(
                                         navController = navController,
                                         userViewModel
                                     )
@@ -105,6 +101,20 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }
 
+                                composable("EditProfile") {
+                                    EditProfile(
+                                        navController = navController,
+                                        userViewModel
+                                    )
+                                }
+
+                                //Prelogin
+                                composable("HomePrelogin") {
+                                    HomePrelogin(
+                                        navController = navController,
+                                        userViewModel
+                                    )
+                                }
                                 composable("Login") {
                                     Login(
                                         navController = navController,

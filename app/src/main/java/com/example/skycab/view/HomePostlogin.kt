@@ -1,7 +1,9 @@
 package com.example.skycab.view
 
+import android.service.autofill.OnClickAction
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,7 +53,7 @@ fun HomePostlogin(
 @Composable
 fun HomePostloginScreen(
     navController: NavController,
-    userViewModel: UserViewModel,
+    userViewModel: UserViewModel
 ) {
     Column(
         modifier = Modifier
@@ -75,7 +77,9 @@ fun HomePostloginScreen(
             Icon(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = "EditProfile",
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier.clickable { navController.navigate("EditProfile") }
+                    .size(35.dp)
+                    .align(Alignment.CenterVertically)
             )
         }
     }
