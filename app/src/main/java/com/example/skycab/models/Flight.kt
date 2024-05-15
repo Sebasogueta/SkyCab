@@ -4,6 +4,7 @@ import java.sql.Date
 import java.time.LocalDateTime
 
 data class Flight(
+    val flightId: Int,
     val pilotUsername: String,
     val passengers: MutableList<User>,
     val totalSeats: Int,

@@ -62,7 +62,7 @@ fun Search(
 
         LazyColumn(horizontalAlignment = Alignment.CenterHorizontally) {
             //item { WeatherInfo(userViewModel, cityInput, weatherViewModel) }
-            item { WeatherInfo(userViewModel) }
+            item { FlightInfo(userViewModel) }
         }
 
     }
@@ -72,17 +72,10 @@ fun Search(
 
 @SuppressLint("SuspiciousIndentation", "UnrememberedMutableState")
 @Composable
-fun WeatherInfo(
+fun FlightInfo(
     userViewModel: UserViewModel,
     //cityParameter: String,
     //weatherViewModel: WeatherViewModel
 ) {
-
-    var logged by remember { mutableStateOf(false) }
-
-    if (userViewModel.auth.currentUser != null) {
-        logged = true
-    }
-
     Text(text = "Search")
 }

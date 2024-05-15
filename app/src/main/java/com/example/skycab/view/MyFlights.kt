@@ -37,6 +37,7 @@ fun MyFlights(
     val dummyIncomingFlights = remember {
         mutableListOf(
             Flight(
+                flightId = 1,
                 pilotUsername = "PilotA",
                 passengers = mutableListOf(dummyUser),
                 totalSeats = 4,
@@ -48,6 +49,7 @@ fun MyFlights(
                 ended = false
             ),
             Flight(
+                flightId = 2,
                 pilotUsername = "PilotB",
                 passengers = mutableListOf(dummyUser),
                 totalSeats = 6,
@@ -59,6 +61,7 @@ fun MyFlights(
                 ended = false
             ),
             Flight(
+                flightId = 3,
                 pilotUsername = "PilotB",
                 passengers = mutableListOf(dummyUser),
                 totalSeats = 6,
@@ -70,6 +73,7 @@ fun MyFlights(
                 ended = false
             ),
             Flight(
+                flightId = 4,
                 pilotUsername = "PilotB",
                 passengers = mutableListOf(dummyUser),
                 totalSeats = 6,
@@ -86,6 +90,7 @@ fun MyFlights(
     val dummyPreviousFlights = remember {
         mutableListOf(
             Flight(
+                flightId = 5,
                 pilotUsername = "PilotC",
                 passengers = mutableListOf(dummyUser),
                 totalSeats = 4,
@@ -97,6 +102,7 @@ fun MyFlights(
                 ended = true
             ),
             Flight(
+                flightId = 6,
                 pilotUsername = "PilotD",
                 passengers = mutableListOf(dummyUser),
                 totalSeats = 6,
@@ -108,6 +114,7 @@ fun MyFlights(
                 ended = true
             ),
             Flight(
+                flightId = 7,
                 pilotUsername = "PilotD",
                 passengers = mutableListOf(dummyUser),
                 totalSeats = 6,
@@ -119,6 +126,7 @@ fun MyFlights(
                 ended = true
             ),
             Flight(
+                flightId = 8,
                 pilotUsername = "PilotD",
                 passengers = mutableListOf(dummyUser),
                 totalSeats = 6,
@@ -159,7 +167,7 @@ fun MyFlights(
             text = "Incoming flights",
             color = text,
             fontSize = 30.sp,
-            fontFamily = FontText,
+            fontFamily = FontTitle,
             modifier = Modifier.align(Alignment.Start)
         )
 
