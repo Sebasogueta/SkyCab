@@ -55,31 +55,32 @@ class MainActivity : ComponentActivity() {
             }
 
             SkyCabTheme {
-                Scaffold(
-                    modifier = Modifier.fillMaxSize(),
-                    bottomBar = { MyBottomNavigation(navController, userViewModel) }
-                )
-                {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(
-                                top = 16.dp,
-                                start = 16.dp,
-                                end = 16.dp,
-                                bottom = it.calculateBottomPadding()
-                            )
-                    ) {
-                        // Usar AnimatedVisibility para mostrar el SplashScreen solo mientras isLoading es verdadero
-                        AnimatedVisibility(visible = isLoading) {
-                            SplashScreen()
-                        }
+                // Usar AnimatedVisibility para mostrar el SplashScreen solo mientras isLoading es verdadero
+                AnimatedVisibility(visible = isLoading) {
+                    SplashScreen()
+                }
 
-                        // Una vez que isLoading sea falso, mostrar el contenido principal
-                        AnimatedVisibility(visible = !isLoading) {
+                // Una vez que isLoading sea falso, mostrar el contenido principal
+                AnimatedVisibility(visible = !isLoading) {
+                    Scaffold(
+                        modifier = Modifier.fillMaxSize(),
+                        bottomBar = { MyBottomNavigation(navController, userViewModel) }
+                    )
+                    {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .padding(
+                                    top = 16.dp,
+                                    start = 16.dp,
+                                    end = 16.dp,
+                                    bottom = it.calculateBottomPadding()
+                                )
+                        ) {
 
                             NavHost(
-                                navController = navController, startDestination = if (userViewModel.auth.currentUser != null) "HomePostlogin" else "HomePrelogin"
+                                navController = navController,
+                                startDestination = if (userViewModel.auth.currentUser != null) "HomePostlogin" else "HomePrelogin"
                             ) {
                                 //BottomBar
                                 composable("MyFlights") {
