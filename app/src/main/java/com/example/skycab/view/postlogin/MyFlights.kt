@@ -1,4 +1,4 @@
-package com.example.skycab.view
+package com.example.skycab.view.postlogin
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -12,6 +12,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,7 +26,6 @@ import com.example.skycab.models.Flight
 import com.example.skycab.models.User
 import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.*
-import com.google.type.DateTime
 import java.sql.Date
 import java.time.LocalDateTime
 
@@ -140,6 +141,8 @@ fun MyFlights(
         )
     }
 
+    val isPilotView by userViewModel.isPilotView.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -163,68 +166,72 @@ fun MyFlights(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Incoming flights",
-            color = text,
-            fontSize = 30.sp,
-            fontFamily = FontTitle,
-            modifier = Modifier.align(Alignment.Start)
-        )
+        if (isPilotView) {
+            Text(text = "Pilot view")
+        } else {
+            Text(
+                text = "Incoming flights",
+                color = text,
+                fontSize = 30.sp,
+                fontFamily = FontTitle,
+                modifier = Modifier.align(Alignment.Start)
+            )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(top = 8.dp)
-        ) {
-            if (dummyIncomingFlights.isNotEmpty()) {
-                items(dummyIncomingFlights) { flight ->
-                    FlightItem(flight, navController)
-                }
-            } else {
-                item {
-                    Text(
-                        text = "You have no incoming flights.",
-                        color = text,
-                        fontFamily = FontText,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(top = 8.dp)
+            ) {
+                if (dummyIncomingFlights.isNotEmpty()) {
+                    items(dummyIncomingFlights) { flight ->
+                        FlightItem(flight, navController)
+                    }
+                } else {
+                    item {
+                        Text(
+                            text = "You have no incoming flights.",
+                            color = text,
+                            fontFamily = FontText,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
-        }
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        Text(
-            text = "Previous flights",
-            color = text,
-            fontSize = 30.sp,
-            fontFamily = FontTitle,
-            modifier = Modifier.align(Alignment.Start)
-        )
+            Text(
+                text = "Previous flights",
+                color = text,
+                fontSize = 30.sp,
+                fontFamily = FontTitle,
+                modifier = Modifier.align(Alignment.Start)
+            )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(top = 8.dp)
-        ) {
-            if (dummyPreviousFlights.isNotEmpty()) {
-                items(dummyPreviousFlights) { flight ->
-                    FlightItem(flight, navController)
-                }
-            } else {
-                item {
-                    Text(
-                        text = "You have no previous flights.",
-                        color = text,
-                        fontFamily = FontText,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(top = 8.dp)
+            ) {
+                if (dummyPreviousFlights.isNotEmpty()) {
+                    items(dummyPreviousFlights) { flight ->
+                        FlightItem(flight, navController)
+                    }
+                } else {
+                    item {
+                        Text(
+                            text = "You have no previous flights.",
+                            color = text,
+                            fontFamily = FontText,
+                            fontSize = 20.sp,
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }

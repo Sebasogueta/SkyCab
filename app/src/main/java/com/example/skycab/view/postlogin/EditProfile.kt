@@ -1,6 +1,5 @@
-package com.example.skycab.view
+package com.example.skycab.view.postlogin
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -9,7 +8,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -31,6 +29,10 @@ import com.example.skycab.ui.theme.textfields
 fun EditProfile(navController: NavController, userViewModel: UserViewModel) {
     var bio by remember { mutableStateOf(TextFieldValue("")) }
     var pilotLicense by remember { mutableStateOf(TextFieldValue("")) }
+
+    val isPilotView by userViewModel.isPilotView.collectAsState()
+    val isPilot by userViewModel.isPilot.collectAsState()
+
 
     // LaunchedEffect para inicializar bio y pilotLicense cuando el Composable se carga
     LaunchedEffect(Unit) {
@@ -91,6 +93,24 @@ fun EditProfile(navController: NavController, userViewModel: UserViewModel) {
                     .align(Alignment.CenterVertically)
             )
         }
+        // Toggle View
+        if (isPilot) {
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = if (isPilotView) "User is in Pilot View" else "User is in User View",
+                color = Color.DarkGray,
+                fontSize = 18.sp
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Button(
+                onClick = { userViewModel.changeView() },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                Text(text = if (isPilotView) "Switch to User View" else "Switch to Pilot View")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+        }
+
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             state = rememberLazyListState(),

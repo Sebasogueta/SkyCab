@@ -1,4 +1,4 @@
-package com.example.skycab.view
+package com.example.skycab.view.postlogin
 
 import android.app.DatePickerDialog
 import android.content.Context
@@ -24,12 +24,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.skycab.models.UserViewModel
-import com.example.skycab.ui.theme.FontText
 import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
 import java.util.Calendar

@@ -1,4 +1,4 @@
-package com.example.skycab.view
+package com.example.skycab.view.prelogin
 
 import android.widget.Toast
 import androidx.compose.foundation.Image

@@ -30,13 +30,13 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.SkyCabTheme
-import com.example.skycab.view.EditProfile
-import com.example.skycab.view.HomePostlogin
-import com.example.skycab.view.HomePrelogin
-import com.example.skycab.view.Login
-import com.example.skycab.view.MyFlights
-import com.example.skycab.view.Register
-import com.example.skycab.view.Search
+import com.example.skycab.view.postlogin.EditProfile
+import com.example.skycab.view.postlogin.HomePostlogin
+import com.example.skycab.view.prelogin.HomePrelogin
+import com.example.skycab.view.prelogin.Login
+import com.example.skycab.view.postlogin.MyFlights
+import com.example.skycab.view.prelogin.Register
+import com.example.skycab.view.postlogin.Search
 import com.example.skycab.view.SplashScreen
 import kotlinx.coroutines.delay
 

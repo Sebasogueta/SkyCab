@@ -15,13 +15,23 @@ class UserViewModel: ViewModel() {
 
     val auth: FirebaseAuth = Firebase.auth
     private val _isLoggedIn = MutableStateFlow(auth.currentUser != null)
+    private val _isPilot = MutableStateFlow(false)
+    private val _isPilotView = MutableStateFlow(false)
     val isLoggedIn: StateFlow<Boolean> get() = _isLoggedIn
+    val isPilot: StateFlow<Boolean> get() = _isPilot
+    val isPilotView: StateFlow<Boolean> get() = _isPilotView
 
     init {
         // AuthStateListener para actualizar el StateFlow cuando cambie el estado de auth
         auth.addAuthStateListener { firebaseAuth ->
             _isLoggedIn.value = firebaseAuth.currentUser != null
+            // Actualiza el estado del piloto cuando el usuario cambia
+            if (_isLoggedIn.value) {
+                checkIfPilot()
+            }
+            _isPilotView.value = false
         }
+
     }
 
     fun signWithEmailAndPassword(email: String, password: String, context: Context, result: (Boolean) -> Unit) {
@@ -156,6 +166,8 @@ class UserViewModel: ViewModel() {
                         userDocumentRef.update(updatedBio)
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
+                                    _isPilot.value = newPilotLicense.isNotEmpty()
+                                    if(!_isPilot.value) _isPilotView.value = false
                                     Log.d("Firestore", "Profile updated successfully")
                                     result(true)
                                 } else {
@@ -167,6 +179,97 @@ class UserViewModel: ViewModel() {
                 }
         }
 
+    }
+
+    fun getUser(callback: (String) -> Unit){
+
+        val currentUser = this.auth.currentUser
+        currentUser?.let { firebaseUser ->
+            val userId = firebaseUser.uid
+            val db = FirebaseFirestore.getInstance()
+            val usersRef = db.collection("users")
+            val userDocument = usersRef.document(userId)
+            var username = "User"
+
+
+            userDocument.get().addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val userData = documentSnapshot.toObject(User::class.java)
+                    userData?.let { user ->
+                        username = user.username
+                        callback(username)
+
+                    }
+                } else {
+                    username = "User"
+                    callback(username)
+                }
+                callback.invoke(username)
+            }.addOnFailureListener { e ->
+                // Manejo de errores al obtener el documento del usuario
+            }
+        }
+
+    }
+
+    fun getUserBio(callback: (String) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            val usersRef = db.collection("users")
+            val userDocumentRef = usersRef.document(currentUser.uid)
+
+            userDocumentRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val userBio = documentSnapshot.data!!["bio"] as String
+                        callback(userBio)
+                    } else {
+                        callback("")
+                    }
+                }
+                .addOnFailureListener {
+                    callback("")
+                }
+        } else {
+            callback("")
+        }
+    }
+
+    fun getUserLicense(callback: (String) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            val usersRef = db.collection("users")
+            val userDocumentRef = usersRef.document(currentUser.uid)
+
+            userDocumentRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val license = documentSnapshot.data!!["pilotLicense"] as String
+                        callback(license)
+                    } else {
+                        callback("")
+                    }
+                }
+                .addOnFailureListener {
+                    callback("")
+                }
+        } else {
+            callback("")
+        }
+    }
+
+    private fun checkIfPilot() {
+        getUserLicense { userLicense ->
+            _isPilot.value = userLicense.isNotEmpty()
+        }
+    }
+
+    fun changeView() {
+        _isPilotView.value = !_isPilotView.value
     }
 
     /*
@@ -265,87 +368,6 @@ class UserViewModel: ViewModel() {
     }
 
      */
-
-    fun getUser(callback: (String) -> Unit){
-
-        val currentUser = this.auth.currentUser
-        currentUser?.let { firebaseUser ->
-            val userId = firebaseUser.uid
-            val db = FirebaseFirestore.getInstance()
-            val usersRef = db.collection("users")
-            val userDocument = usersRef.document(userId)
-            var username = "User"
-
-
-            userDocument.get().addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val userData = documentSnapshot.toObject(User::class.java)
-                    userData?.let { user ->
-                        username = user.username
-                        callback(username)
-
-                    }
-                } else {
-                    username = "User"
-                    callback(username)
-                }
-                callback.invoke(username)
-            }.addOnFailureListener { e ->
-                // Manejo de errores al obtener el documento del usuario
-            }
-        }
-
-    }
-
-    fun getUserBio(callback: (String) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
-        val currentUser = auth.currentUser
-
-        if (currentUser != null) {
-            val usersRef = db.collection("users")
-            val userDocumentRef = usersRef.document(currentUser.uid)
-
-            userDocumentRef.get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        val userBio = documentSnapshot.data!!["bio"] as String
-                        callback(userBio)
-                    } else {
-                        callback("")
-                    }
-                }
-                .addOnFailureListener {
-                    callback("")
-                }
-        } else {
-            callback("")
-        }
-    }
-
-    fun getUserLicense(callback: (String) -> Unit) {
-        val db = FirebaseFirestore.getInstance()
-        val currentUser = auth.currentUser
-
-        if (currentUser != null) {
-            val usersRef = db.collection("users")
-            val userDocumentRef = usersRef.document(currentUser.uid)
-
-            userDocumentRef.get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        val license = documentSnapshot.data!!["pilotLicense"] as String
-                        callback(license)
-                    } else {
-                        callback("")
-                    }
-                }
-                .addOnFailureListener {
-                    callback("")
-                }
-        } else {
-            callback("")
-        }
-    }
 
 }
 
