@@ -33,7 +33,7 @@ fun MyFlights(
     navController: NavHostController, userViewModel: UserViewModel
 ) {
     // Dummy data TODO ELIMINAR DATOS DE PRUEBA
-    val dummyUser = User("JohnDoe","")
+    val dummyUser = User("JohnDoe","","I am new Here!")
     val dummyIncomingFlights = remember {
         mutableListOf(
             Flight(
