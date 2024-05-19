@@ -29,118 +29,118 @@ import com.example.skycab.ui.theme.*
 import java.sql.Date
 import java.time.LocalDateTime
 
+// Dummy data TODO ELIMINAR DATOS DE PRUEBA
+val dummyUser = User("JohnDoe","","I am new Here!", mutableListOf())
+val dummyIncomingFlights = {
+    mutableListOf(
+        Flight(
+            flightId = 1,
+            pilotUsername = "PilotA",
+            passengers = mutableListOf(dummyUser),
+            totalSeats = 4,
+            departureDateTime = LocalDateTime.of(2024, 6, 1, 14, 0),
+            arrivalDateTime = LocalDateTime.of(2024, 6, 1, 16, 0),
+            departureAirport = "JFK",
+            arrivalAirport = "LAX",
+            publicationDate = Date(2024, 5, 1),
+            ended = false, price = 200.0
+        ),
+        Flight(
+            flightId = 2,
+            pilotUsername = "PilotB",
+            passengers = mutableListOf(dummyUser),
+            totalSeats = 6,
+            departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0),
+            arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0),
+            departureAirport = "ORD",
+            arrivalAirport = "ATL",
+            publicationDate = Date(2024, 5, 2),
+            ended = false, price = 200.0
+        ),
+        Flight(
+            flightId = 3,
+            pilotUsername = "PilotB",
+            passengers = mutableListOf(dummyUser),
+            totalSeats = 6,
+            departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0),
+            arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0),
+            departureAirport = "ORD",
+            arrivalAirport = "ATL",
+            publicationDate = Date(2024, 5, 2),
+            ended = false, price = 200.0
+        ),
+        Flight(
+            flightId = 4,
+            pilotUsername = "PilotB",
+            passengers = mutableListOf(dummyUser),
+            totalSeats = 6,
+            departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0),
+            arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0),
+            departureAirport = "ORD",
+            arrivalAirport = "ATL",
+            publicationDate = Date(2024, 5, 2),
+            ended = false, price = 200.0
+        )
+
+    )
+}
+val dummyPreviousFlights = {
+    mutableListOf(
+        Flight(
+            flightId = 5,
+            pilotUsername = "PilotC",
+            passengers = mutableListOf(dummyUser),
+            totalSeats = 4,
+            departureDateTime = LocalDateTime.of(2024, 5, 1, 14, 0),
+            arrivalDateTime = LocalDateTime.of(2024, 5, 1, 16, 0),
+            departureAirport = "MIA",
+            arrivalAirport = "BOS",
+            publicationDate = Date(2024, 4, 1),
+            ended = true, price = 200.0
+        ),
+        Flight(
+            flightId = 6,
+            pilotUsername = "PilotD",
+            passengers = mutableListOf(dummyUser),
+            totalSeats = 6,
+            departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0),
+            arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0),
+            departureAirport = "SFO",
+            arrivalAirport = "SEA",
+            publicationDate = Date(2024, 3, 15),
+            ended = true, price = 200.0
+        ),
+        Flight(
+            flightId = 7,
+            pilotUsername = "PilotD",
+            passengers = mutableListOf(dummyUser),
+            totalSeats = 6,
+            departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0),
+            arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0),
+            departureAirport = "SFO",
+            arrivalAirport = "SEA",
+            publicationDate = Date(2024, 3, 15),
+            ended = true, price = 200.0
+        ),
+        Flight(
+            flightId = 8,
+            pilotUsername = "PilotD",
+            passengers = mutableListOf(dummyUser),
+            totalSeats = 6,
+            departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0),
+            arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0),
+            departureAirport = "SFO",
+            arrivalAirport = "SEA",
+            publicationDate = Date(2024, 3, 15),
+            ended = true, price = 200.0
+        )
+    )
+}
+
 @Composable
 fun MyFlights(
     navController: NavHostController, userViewModel: UserViewModel
 ) {
-    // Dummy data TODO ELIMINAR DATOS DE PRUEBA
-    val dummyUser = User("JohnDoe","","I am new Here!")
-    val dummyIncomingFlights = remember {
-        mutableListOf(
-            Flight(
-                flightId = 1,
-                pilotUsername = "PilotA",
-                passengers = mutableListOf(dummyUser),
-                totalSeats = 4,
-                departureDateTime = LocalDateTime.of(2024, 6, 1, 14, 0),
-                arrivalDateTime = LocalDateTime.of(2024, 6, 1, 16, 0),
-                departureAirport = "JFK",
-                arrivalAirport = "LAX",
-                publicationDate = Date(2024, 5, 1),
-                ended = false
-            ),
-            Flight(
-                flightId = 2,
-                pilotUsername = "PilotB",
-                passengers = mutableListOf(dummyUser),
-                totalSeats = 6,
-                departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0),
-                arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0),
-                departureAirport = "ORD",
-                arrivalAirport = "ATL",
-                publicationDate = Date(2024, 5, 2),
-                ended = false
-            ),
-            Flight(
-                flightId = 3,
-                pilotUsername = "PilotB",
-                passengers = mutableListOf(dummyUser),
-                totalSeats = 6,
-                departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0),
-                arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0),
-                departureAirport = "ORD",
-                arrivalAirport = "ATL",
-                publicationDate = Date(2024, 5, 2),
-                ended = false
-            ),
-            Flight(
-                flightId = 4,
-                pilotUsername = "PilotB",
-                passengers = mutableListOf(dummyUser),
-                totalSeats = 6,
-                departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0),
-                arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0),
-                departureAirport = "ORD",
-                arrivalAirport = "ATL",
-                publicationDate = Date(2024, 5, 2),
-                ended = false
-            )
-
-        )
-    }
-    val dummyPreviousFlights = remember {
-        mutableListOf(
-            Flight(
-                flightId = 5,
-                pilotUsername = "PilotC",
-                passengers = mutableListOf(dummyUser),
-                totalSeats = 4,
-                departureDateTime = LocalDateTime.of(2024, 5, 1, 14, 0),
-                arrivalDateTime = LocalDateTime.of(2024, 5, 1, 16, 0),
-                departureAirport = "MIA",
-                arrivalAirport = "BOS",
-                publicationDate = Date(2024, 4, 1),
-                ended = true
-            ),
-            Flight(
-                flightId = 6,
-                pilotUsername = "PilotD",
-                passengers = mutableListOf(dummyUser),
-                totalSeats = 6,
-                departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0),
-                arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0),
-                departureAirport = "SFO",
-                arrivalAirport = "SEA",
-                publicationDate = Date(2024, 3, 15),
-                ended = true
-            ),
-            Flight(
-                flightId = 7,
-                pilotUsername = "PilotD",
-                passengers = mutableListOf(dummyUser),
-                totalSeats = 6,
-                departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0),
-                arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0),
-                departureAirport = "SFO",
-                arrivalAirport = "SEA",
-                publicationDate = Date(2024, 3, 15),
-                ended = true
-            ),
-            Flight(
-                flightId = 8,
-                pilotUsername = "PilotD",
-                passengers = mutableListOf(dummyUser),
-                totalSeats = 6,
-                departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0),
-                arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0),
-                departureAirport = "SFO",
-                arrivalAirport = "SEA",
-                publicationDate = Date(2024, 3, 15),
-                ended = true
-            )
-        )
-    }
-
     val isPilotView by userViewModel.isPilotView.collectAsState()
 
     Column(
@@ -167,71 +167,92 @@ fun MyFlights(
         Spacer(modifier = Modifier.height(16.dp))
 
         if (isPilotView) {
-            Text(text = "Pilot view")
+            MyFlightsPilot(navController = navController, userViewModel = userViewModel)
         } else {
-            Text(
-                text = "Incoming flights",
-                color = text,
-                fontSize = 30.sp,
-                fontFamily = FontTitle,
-                modifier = Modifier.align(Alignment.Start)
-            )
+            MyFlightsUser(navController = navController, userViewModel = userViewModel)
+        }
+    }
+}
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(top = 8.dp)
-            ) {
-                if (dummyIncomingFlights.isNotEmpty()) {
-                    items(dummyIncomingFlights) { flight ->
-                        FlightItem(flight, navController)
-                    }
-                } else {
-                    item {
-                        Text(
-                            text = "You have no incoming flights.",
-                            color = text,
-                            fontFamily = FontText,
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+@Composable
+fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewModel){
+    Text(text = "Pilot view")
+}
+@Composable
+fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel){
+
+    val dummyIncomingFlights: MutableList<Flight> = dummyIncomingFlights.invoke() /* TODO BORRAR DATOS DE PUREBA */
+    val dummyPreviousFlights: MutableList<Flight> = dummyPreviousFlights.invoke() /* TODO BORRAR DATOS DE PUREBA */
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Incoming flights",
+            color = text,
+            fontSize = 30.sp,
+            fontFamily = FontTitle,
+            modifier = Modifier.align(Alignment.Start)
+        )
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(top = 8.dp)
+        ) {
+            if (dummyIncomingFlights.isNotEmpty()) {
+                items(dummyIncomingFlights) { flight ->
+                    FlightItem(flight, navController)
+                }
+            } else {
+                item {
+                    Text(
+                        text = "You have no incoming flights.",
+                        color = text,
+                        fontFamily = FontText,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
+        }
 
-            Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
-            Text(
-                text = "Previous flights",
-                color = text,
-                fontSize = 30.sp,
-                fontFamily = FontTitle,
-                modifier = Modifier.align(Alignment.Start)
-            )
+        Text(
+            text = "Previous flights",
+            color = text,
+            fontSize = 30.sp,
+            fontFamily = FontTitle,
+            modifier = Modifier.align(Alignment.Start)
+        )
 
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .padding(top = 8.dp)
-            ) {
-                if (dummyPreviousFlights.isNotEmpty()) {
-                    items(dummyPreviousFlights) { flight ->
-                        FlightItem(flight, navController)
-                    }
-                } else {
-                    item {
-                        Text(
-                            text = "You have no previous flights.",
-                            color = text,
-                            fontFamily = FontText,
-                            fontSize = 20.sp,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth()
-                        )
-                    }
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(top = 8.dp)
+        ) {
+            if (dummyPreviousFlights.isNotEmpty()) {
+                items(dummyPreviousFlights) { flight ->
+                    FlightItem(flight, navController)
+                }
+            } else {
+                item {
+                    Text(
+                        text = "You have no previous flights.",
+                        color = text,
+                        fontFamily = FontText,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
             }
         }

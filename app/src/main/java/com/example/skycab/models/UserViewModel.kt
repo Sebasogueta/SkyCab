@@ -10,6 +10,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.time.LocalDateTime
+import java.util.Date
 
 class UserViewModel: ViewModel() {
 
@@ -67,7 +69,7 @@ class UserViewModel: ViewModel() {
                     if (task.isSuccessful) {
 
                         val currentUser = auth.currentUser
-                        val newUser = User(username, "","I am new here!") /* TODO AGREGAR MYFLIGHTS */
+                        val newUser = User(username, "","I am new here!", mutableListOf()) /* TODO AGREGAR MYFLIGHTS */
 
                         // Verificar si el usuario ya tiene un documento en Firestore
                         currentUser?.uid?.let { userId ->
@@ -270,6 +272,50 @@ class UserViewModel: ViewModel() {
 
     fun changeView() {
         _isPilotView.value = !_isPilotView.value
+    }
+
+    fun createFlight(
+        departureAirport: String,
+        arrivalAirport: String,
+        offeredSeats: Int,
+        departureDateTime: LocalDateTime,
+        arrivalDateTime: LocalDateTime,
+        price: Double,
+        function: () -> Unit
+    ) {
+        val db = FirebaseFirestore.getInstance()
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            val flightsRef = db.collection("flights")
+            val pilotEmail = currentUser.email
+
+            // Crear un mapa con los datos del vuelo
+            val flightData = hashMapOf(
+                "pilotEmail" to pilotEmail,
+                "passengers" to mutableListOf<String>(),
+                "totalSeats" to offeredSeats,
+                "departureDateTime" to departureDateTime.toString(),
+                "arrivalDateTime" to arrivalDateTime.toString(),
+                "departureAirport" to departureAirport,
+                "arrivalAirport" to arrivalAirport,
+                "publicationDate" to Date(),
+                "price" to price
+            )
+
+            // Añadir el documento a la colección "flights"
+            flightsRef.add(flightData)
+                .addOnSuccessListener { documentReference ->
+                    Log.d("Firestore", "Flight created successfully with ID: ${documentReference.id}")
+                    documentReference.update("flightId", documentReference.id)
+                }
+                .addOnFailureListener { e ->
+                    Log.e("Firestore", "Error creating flight", e)
+                }
+        } else {
+            Log.e("Firestore", "No user is currently signed in")
+        }
     }
 
     /*

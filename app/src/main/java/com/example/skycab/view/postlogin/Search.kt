@@ -97,7 +97,7 @@ fun Search(
             TextField(
                 value = date,
                 onValueChange = { date = it },
-                label = { Text("Date (YYYY-MM-DD)") },
+                label = { Text("Date (DD-MM-YYYY)") },
                 modifier = Modifier
                     .weight(1f)
                     .clickable { showDatePicker(context) { selectedDate -> date = selectedDate } }
@@ -140,8 +140,24 @@ fun Search(
     }
 }
 
+private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
+    val calendar = Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+    val datePickerDialog = DatePickerDialog(
+        context,
+        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
+            val formattedDate = "${String.format("%02d", selectedDay)}-${String.format("%02d", selectedMonth + 1)}-${selectedYear}"
+            onDateSelected(formattedDate)
+        }, year, month, day
+    )
+    datePickerDialog.show()
+}
+
 @Composable
-fun FlightCard(flight: FlightInfo) {
+private fun FlightCard(flight: FlightInfo) {
     Card(
         shape = RectangleShape,
         modifier = Modifier
@@ -183,27 +199,11 @@ fun FlightCard(flight: FlightInfo) {
     }
 }
 
-fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
-    val calendar = Calendar.getInstance()
-    val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH)
-    val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-    val datePickerDialog = DatePickerDialog(
-        context,
-        { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
-            val formattedDate = "${selectedYear}-${String.format("%02d", selectedMonth + 1)}-${String.format("%02d", selectedDay)}"
-            onDateSelected(formattedDate)
-        }, year, month, day
-    )
-    datePickerDialog.show()
-}
-
 fun sampleFlights(): List<FlightInfo> {
     return listOf(
         FlightInfo(
             name = "Sam Smith",
-            date = "2024-04-20",
+            date = "20-04-2024",
             seatsAvailable = "1/2",
             departureLocation = "VLC Airport",
             departureTime = "11:35Hrs",
@@ -213,7 +213,7 @@ fun sampleFlights(): List<FlightInfo> {
         ),
         FlightInfo(
             name = "Jack Johnson",
-            date = "2024-04-20",
+            date = "20-04-2024",
             seatsAvailable = "2/2",
             departureLocation = "VLC Airport",
             departureTime = "16:05Hrs",
@@ -223,7 +223,7 @@ fun sampleFlights(): List<FlightInfo> {
         ),
         FlightInfo(
             name = "Luke Like",
-            date = "2024-04-20",
+            date = "20-04-2024",
             seatsAvailable = "1/4",
             departureLocation = "VLC Airport",
             departureTime = "13:05Hrs",
@@ -233,7 +233,7 @@ fun sampleFlights(): List<FlightInfo> {
         ),
         FlightInfo(
             name = "Rick Rock",
-            date = "2024-04-21",
+            date = "21-04-2024",
             seatsAvailable = "3/3",
             departureLocation = "VLC Airport",
             departureTime = "09:00Hrs",
