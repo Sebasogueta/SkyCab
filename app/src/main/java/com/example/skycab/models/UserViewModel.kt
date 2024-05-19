@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
 import java.util.Date
 
-class UserViewModel: ViewModel() {
+class UserViewModel : ViewModel() {
 
     val auth: FirebaseAuth = Firebase.auth
     private val _isLoggedIn = MutableStateFlow(auth.currentUser != null)
@@ -36,7 +36,12 @@ class UserViewModel: ViewModel() {
 
     }
 
-    fun signWithEmailAndPassword(email: String, password: String, context: Context, result: (Boolean) -> Unit) {
+    fun signWithEmailAndPassword(
+        email: String,
+        password: String,
+        context: Context,
+        result: (Boolean) -> Unit
+    ) {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 result(true)
@@ -58,7 +63,13 @@ class UserViewModel: ViewModel() {
 
     }
 
-    fun registerWithEmailAndPassword(username: String, email: String, password: String, context: Context, result: (Boolean) -> Unit) {
+    fun registerWithEmailAndPassword(
+        username: String,
+        email: String,
+        password: String,
+        context: Context,
+        result: (Boolean) -> Unit
+    ) {
         val db = FirebaseFirestore.getInstance()
         val usersRef = db.collection("users")
 
@@ -69,7 +80,12 @@ class UserViewModel: ViewModel() {
                     if (task.isSuccessful) {
 
                         val currentUser = auth.currentUser
-                        val newUser = User(username, "","I am new here!", mutableListOf()) /* TODO AGREGAR MYFLIGHTS */
+                        val newUser = User(
+                            username,
+                            "",
+                            "I am new here!",
+                            mutableListOf()
+                        ) /* TODO AGREGAR MYFLIGHTS */
 
                         // Verificar si el usuario ya tiene un documento en Firestore
                         currentUser?.uid?.let { userId ->
@@ -149,7 +165,7 @@ class UserViewModel: ViewModel() {
 
     }
 
-    fun editProfile (newBio: String, newPilotLicense: String, result: (Boolean) -> Unit) {
+    fun editProfile(newBio: String, newPilotLicense: String, result: (Boolean) -> Unit) {
 
         val db = FirebaseFirestore.getInstance()
         val currentUser = auth.currentUser
@@ -169,7 +185,7 @@ class UserViewModel: ViewModel() {
                             .addOnCompleteListener { task ->
                                 if (task.isSuccessful) {
                                     _isPilot.value = newPilotLicense.isNotEmpty()
-                                    if(!_isPilot.value) _isPilotView.value = false
+                                    if (!_isPilot.value) _isPilotView.value = false
                                     Log.d("Firestore", "Profile updated successfully")
                                     result(true)
                                 } else {
@@ -183,7 +199,7 @@ class UserViewModel: ViewModel() {
 
     }
 
-    fun getUser(callback: (String) -> Unit){
+    fun getUser(callback: (String) -> Unit) {
 
         val currentUser = this.auth.currentUser
         currentUser?.let { firebaseUser ->
@@ -307,7 +323,10 @@ class UserViewModel: ViewModel() {
             // Añadir el documento a la colección "flights"
             flightsRef.add(flightData)
                 .addOnSuccessListener { documentReference ->
-                    Log.d("Firestore", "Flight created successfully with ID: ${documentReference.id}")
+                    Log.d(
+                        "Firestore",
+                        "Flight created successfully with ID: ${documentReference.id}"
+                    )
                     documentReference.update("flightId", documentReference.id)
                 }
                 .addOnFailureListener { e ->
@@ -337,38 +356,155 @@ class UserViewModel: ViewModel() {
                 callback(emptyList())
             }
     }
-    
 
-    /*
-    fun getFavoriteCities(callback: (MutableList<String>) -> Unit) {
-        val currentUser = this.auth.currentUser
-        currentUser?.let { firebaseUser ->
-            val userId = firebaseUser.uid
-            val db = FirebaseFirestore.getInstance()
+    fun bookAFlight(flightId: String, result: (Boolean) -> Unit) {
+
+        val db = FirebaseFirestore.getInstance()
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
             val usersRef = db.collection("users")
-            val userDocument = usersRef.document(userId)
-            var favCities = mutableListOf<String>()
+            val userDocumentRef = usersRef.document(currentUser.uid)
+            val flightsRef = db.collection("flights")
+            val flightDocumentRef = flightsRef.document(flightId)
 
+            flightDocumentRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val passengers1 = documentSnapshot.data!!["passengers"] as List<String>
+                        val totalSeats = documentSnapshot.data!!["totalSeats"] as Long
 
-            userDocument.get().addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val userData = documentSnapshot.toObject(User::class.java)
-                    userData?.let { user ->
-                        favCities = user.favorites
-                        callback(favCities)
-                        // Actualización del estado de favoriteCities cuando se completa la operación
+                        // Verificar si hay asientos disponibles
+                        if (totalSeats - passengers1.size > 0) {
+                            val alreadyRegistered = passengers1.contains(currentUser.uid)
+                            if (alreadyRegistered) {
+                                // TODO: Mostrar Toast - Ya registrado
+                                result(false)
+                            } else {
+                                // Agregar al usuario actual a la lista de pasajeros
+                                val newPassengersList = passengers1.toMutableList()
+                                newPassengersList.add(currentUser.uid)
+
+                                // Actualizar el documento en Firestore con la nueva lista de pasajeros
+                                flightDocumentRef.update("passengers", newPassengersList)
+                                    .addOnSuccessListener {
+                                        // TODO: Mostrar Toast - Registro exitoso
+                                        userDocumentRef.get()
+                                            .addOnSuccessListener { documentSnapshot ->
+                                                if (documentSnapshot.exists()) {
+                                                    val flightIds =
+                                                        documentSnapshot.data!!["flightIds"] as List<String>
+
+                                                    val newFlightList = flightIds.toMutableList()
+                                                    newFlightList.add(flightId)
+
+                                                    userDocumentRef.update(
+                                                        "flightIds",
+                                                        newFlightList
+                                                    )
+                                                        .addOnCompleteListener { task ->
+                                                            if (task.isSuccessful) {
+                                                                Log.d(
+                                                                    "Firestore",
+                                                                    "FlightIDs list updated"
+                                                                )
+                                                                result(true)
+                                                            } else {
+                                                                Log.e(
+                                                                    "Firestore",
+                                                                    "Error updating FlightIDs: ${task.exception}"
+                                                                )
+                                                                result(false)
+                                                            }
+                                                        }
+                                                } else {
+                                                    result(false)
+                                                }
+                                            }
+                                            .addOnFailureListener { e ->
+                                                // TODO: Manejar el fallo de la actualización
+                                                result(false)
+                                            }
+                                    }
+                            }
+                        }
+
+                    } else {
+                        result(false)
                     }
-                } else {
-                    // El documento del usuario no existe
+
                 }
-                callback.invoke(favCities)
-            }.addOnFailureListener { e ->
-                // Manejo de errores al obtener el documento del usuario
-            }
+                .addOnFailureListener { e ->
+                    // TODO: Manejar el fallo
+                    result(false)
+                }
         }
     }
+}
 
-    fun removeFavorite(favoriteCities: MutableList<String>, favoriteCity: String, callback: (MutableList<String>) -> Unit){
+/*
+fun getFavoriteCities(callback: (MutableList<String>) -> Unit) {
+    val currentUser = this.auth.currentUser
+    currentUser?.let { firebaseUser ->
+        val userId = firebaseUser.uid
+        val db = FirebaseFirestore.getInstance()
+        val usersRef = db.collection("users")
+        val userDocument = usersRef.document(userId)
+        var favCities = mutableListOf<String>()
+
+
+        userDocument.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val userData = documentSnapshot.toObject(User::class.java)
+                userData?.let { user ->
+                    favCities = user.favorites
+                    callback(favCities)
+                    // Actualización del estado de favoriteCities cuando se completa la operación
+                }
+            } else {
+                // El documento del usuario no existe
+            }
+            callback.invoke(favCities)
+        }.addOnFailureListener { e ->
+            // Manejo de errores al obtener el documento del usuario
+        }
+    }
+}
+
+fun removeFavorite(favoriteCities: MutableList<String>, favoriteCity: String, callback: (MutableList<String>) -> Unit){
+
+val db = FirebaseFirestore.getInstance()
+val currentUser = auth.currentUser
+
+if (currentUser != null) {
+    val usersRef = db.collection("users")
+    val userDocumentRef = usersRef.document(currentUser.uid)
+
+    userDocumentRef.get()
+        .addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val favoritesList = documentSnapshot.data!!["favorites"] as MutableList<String>
+                favoritesList.remove(favoriteCity)
+
+                val updatedMap = hashMapOf<String, Any>()
+                updatedMap["favorites"] = favoritesList
+
+                userDocumentRef.update(updatedMap)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Log.d("Firestore", "Favorites updated successfully")
+                            callback(favoritesList)
+                        } else {
+                            Log.e("Firestore", "Error updating favorites: ${task.exception}")
+                            callback(favoritesList)
+                        }
+                    }
+            }
+        }
+}
+}
+
+fun addFavorite(favoriteCities: MutableList<String>, favoriteCity: String, callback: (MutableList<String>) -> Unit){
 
     val db = FirebaseFirestore.getInstance()
     val currentUser = auth.currentUser
@@ -381,7 +517,7 @@ class UserViewModel: ViewModel() {
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
                     val favoritesList = documentSnapshot.data!!["favorites"] as MutableList<String>
-                    favoritesList.remove(favoriteCity)
+                    favoritesList.add(favoriteCity)
 
                     val updatedMap = hashMapOf<String, Any>()
                     updatedMap["favorites"] = favoritesList
@@ -401,41 +537,7 @@ class UserViewModel: ViewModel() {
     }
 }
 
-    fun addFavorite(favoriteCities: MutableList<String>, favoriteCity: String, callback: (MutableList<String>) -> Unit){
+ */
 
-        val db = FirebaseFirestore.getInstance()
-        val currentUser = auth.currentUser
-
-        if (currentUser != null) {
-            val usersRef = db.collection("users")
-            val userDocumentRef = usersRef.document(currentUser.uid)
-
-            userDocumentRef.get()
-                .addOnSuccessListener { documentSnapshot ->
-                    if (documentSnapshot.exists()) {
-                        val favoritesList = documentSnapshot.data!!["favorites"] as MutableList<String>
-                        favoritesList.add(favoriteCity)
-
-                        val updatedMap = hashMapOf<String, Any>()
-                        updatedMap["favorites"] = favoritesList
-
-                        userDocumentRef.update(updatedMap)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    Log.d("Firestore", "Favorites updated successfully")
-                                    callback(favoritesList)
-                                } else {
-                                    Log.e("Firestore", "Error updating favorites: ${task.exception}")
-                                    callback(favoritesList)
-                                }
-                            }
-                    }
-                }
-        }
-    }
-
-     */
-
-}
 
 

@@ -147,7 +147,7 @@ fun Search(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(flightsFiltered) { flight ->
-                    FlightCard(flight)
+                    FlightCard(flight, userViewModel)
                 }
             }
         }
@@ -172,7 +172,7 @@ private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
 
 
 @Composable
-private fun FlightCard(flight: Flight) {
+private fun FlightCard(flight: Flight, userViewModel: UserViewModel) {
     Card(
         shape = RectangleShape,
         modifier = Modifier
@@ -219,7 +219,13 @@ private fun FlightCard(flight: Flight) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "${flight.price}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                Button(onClick = { /* Handle book now action */ }) {
+                Button(onClick = { userViewModel.bookAFlight(flight.flightId) { success ->
+                    if(success){
+                        println("correcto")
+                    } else {
+                        println("fallo")
+                    }
+                } }) {
                     Text(text = "Book now!")
                 }
             }
