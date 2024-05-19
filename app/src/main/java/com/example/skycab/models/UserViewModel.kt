@@ -300,7 +300,7 @@ class UserViewModel: ViewModel() {
                 "arrivalDateTime" to arrivalDateTime.toString(),
                 "departureAirport" to departureAirport,
                 "arrivalAirport" to arrivalAirport,
-                "publicationDate" to Date(),
+                "publicationDate" to Date().toString(),
                 "price" to price
             )
 
@@ -317,6 +317,27 @@ class UserViewModel: ViewModel() {
             Log.e("Firestore", "No user is currently signed in")
         }
     }
+
+    fun getFlights(callback: (List<Flight>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val flightsRef = db.collection("flights")
+
+        flightsRef.get()
+            .addOnSuccessListener { querySnapshot ->
+                val flightsList = mutableListOf<Flight>()
+                for (document in querySnapshot.documents) {
+                    document.toObject(Flight::class.java)?.let { flight ->
+                        flightsList.add(flight)
+                    }
+                }
+                callback(flightsList)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error getting flights: ", exception)
+                callback(emptyList())
+            }
+    }
+    
 
     /*
     fun getFavoriteCities(callback: (MutableList<String>) -> Unit) {

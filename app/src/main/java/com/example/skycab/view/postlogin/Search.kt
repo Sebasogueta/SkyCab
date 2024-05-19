@@ -1,5 +1,6 @@
 package com.example.skycab.view.postlogin
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
@@ -27,22 +28,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.skycab.models.Flight
 import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
+import java.text.SimpleDateFormat
 import java.util.Calendar
 
-data class FlightInfo(
-    val name: String,
-    val date: String,
-    val seatsAvailable: String,
-    val departureLocation: String,
-    val departureTime: String,
-    val destinationLocation: String,
-    val destinationTime: String,
-    val price: String
-)
 
+@SuppressLint("SimpleDateFormat")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Search(
@@ -52,8 +46,17 @@ fun Search(
     var departureCity by remember { mutableStateOf("") }
     var destinationCity by remember { mutableStateOf("") }
     var date by remember { mutableStateOf("") }
-    val flights = remember { mutableStateOf(sampleFlights()) }
     val context = LocalContext.current
+    var flights by remember { mutableStateOf<List<Flight>>(emptyList()) }
+    var flightsFiltered by remember { mutableStateOf<List<Flight>>(emptyList()) }
+
+    // Fetch flights when the composable is first displayed
+    LaunchedEffect(Unit) {
+        userViewModel.getFlights { fetchedFlights ->
+            flights = fetchedFlights
+            flightsFiltered = fetchedFlights
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -107,20 +110,31 @@ fun Search(
             }
         }
 
+
+
+        val date1Format = SimpleDateFormat("dd-MM-yyyy")
+        val date2Format = SimpleDateFormat("yyyy-MM-dd")
+
+
         Button(
             onClick = {
+                var formatedDate2 = ""
+                if(date.isNotEmpty()) {
+                    val formatedDate1 = date1Format.parse(date)
+                    formatedDate2 = date2Format.format(formatedDate1).toString()
+                }
                 // Update the flight list based on search criteria
-                flights.value = sampleFlights().filter {
-                    it.departureLocation.contains(departureCity, ignoreCase = true) &&
-                            it.destinationLocation.contains(destinationCity, ignoreCase = true) &&
-                            it.date == date // Ensure the date format matches
+                flightsFiltered = flights.filter {
+                    it.departureAirport.contains(departureCity, ignoreCase = true) &&
+                            it.arrivalAirport.contains(destinationCity, ignoreCase = true) &&
+                            it.departureDateTime.contains(formatedDate2) /* TODO CAMBIAR */
                 }
             },
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
             Text(text = "Search")
         }
-        if (flights.value.isEmpty()) {
+        if (flightsFiltered.isEmpty()) {
             Text(
                 text = "No flights match your criteria.",
                 fontSize = 16.sp,
@@ -132,7 +146,7 @@ fun Search(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                items(flights.value) { flight ->
+                items(flightsFiltered) { flight ->
                     FlightCard(flight)
                 }
             }
@@ -156,8 +170,9 @@ private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
     datePickerDialog.show()
 }
 
+
 @Composable
-private fun FlightCard(flight: FlightInfo) {
+private fun FlightCard(flight: Flight) {
     Card(
         shape = RectangleShape,
         modifier = Modifier
@@ -175,71 +190,39 @@ private fun FlightCard(flight: FlightInfo) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = flight.name, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                Text(text = flight.date, fontSize = 16.sp)
+                Text(text = flight.pilotUsername, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = flight.departureDateTime.toString(),
+                    fontSize = 16.sp
+                ) /* TODO MOSTRAR SOLO DATE */
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Seats Available: ${flight.seatsAvailable}", fontSize = 16.sp)
-            Text(text = "Departure Location: ${flight.departureLocation}", fontSize = 16.sp)
-            Text(text = "Departure Time: ${flight.departureTime}", fontSize = 16.sp)
-            Text(text = "Destination Location: ${flight.destinationLocation}", fontSize = 16.sp)
-            Text(text = "Destination Time: ${flight.destinationTime}", fontSize = 16.sp)
+            val availableSeats = flight.totalSeats - flight.passengers.size
+            Text(text = "Seats Available: ${availableSeats / flight.totalSeats}", fontSize = 16.sp)
+            Text(text = "Departure Location: ${flight.departureAirport}", fontSize = 16.sp)
+            Text(
+                text = "Departure Time: ${flight.departureDateTime}",
+                fontSize = 16.sp
+            ) /* TODO MOSTRAR SOLO DATE */
+            Text(
+                text = "Destination Location: ${flight.arrivalAirport}",
+                fontSize = 16.sp
+            ) /* TODO MOSTRAR SOLO TIME */
+            Text(
+                text = "Destination Time: ${flight.arrivalDateTime}",
+                fontSize = 16.sp
+            ) /* TODO MOSTRAR TIME Y DATE SEPARADOS */
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = flight.price, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(text = "${flight.price}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Button(onClick = { /* Handle book now action */ }) {
                     Text(text = "Book now!")
                 }
             }
         }
     }
-}
-
-fun sampleFlights(): List<FlightInfo> {
-    return listOf(
-        FlightInfo(
-            name = "Sam Smith",
-            date = "20-04-2024",
-            seatsAvailable = "1/2",
-            departureLocation = "VLC Airport",
-            departureTime = "11:35Hrs",
-            destinationLocation = "VLC Airport",
-            destinationTime = "13:35Hrs",
-            price = "€35"
-        ),
-        FlightInfo(
-            name = "Jack Johnson",
-            date = "20-04-2024",
-            seatsAvailable = "2/2",
-            departureLocation = "VLC Airport",
-            departureTime = "16:05Hrs",
-            destinationLocation = "VLC Airport",
-            destinationTime = "18:25Hrs",
-            price = "€45"
-        ),
-        FlightInfo(
-            name = "Luke Like",
-            date = "20-04-2024",
-            seatsAvailable = "1/4",
-            departureLocation = "VLC Airport",
-            departureTime = "13:05Hrs",
-            destinationLocation = "VLC Airport",
-            destinationTime = "20:05Hrs",
-            price = "€20"
-        ),
-        FlightInfo(
-            name = "Rick Rock",
-            date = "21-04-2024",
-            seatsAvailable = "3/3",
-            departureLocation = "VLC Airport",
-            departureTime = "09:00Hrs",
-            destinationLocation = "VLC Airport",
-            destinationTime = "11:00Hrs",
-            price = "€30"
-        )
-    )
 }

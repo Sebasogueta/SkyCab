@@ -6,6 +6,7 @@ import android.content.Context
 import android.widget.DatePicker
 import android.widget.TimePicker
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,12 +24,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,19 +41,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.example.skycab.models.Flight
 import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
-import kotlinx.coroutines.launch
 import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
@@ -90,31 +91,20 @@ fun HomePostlogin(
                     .align(Alignment.CenterVertically)
             )
         }
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
-            state = rememberLazyListState(),
-            contentPadding = PaddingValues(16.dp),
-            reverseLayout = false,
-        ) {
-            if (isPilotView) {
-                item {
-                    HomePostLoginPiloto(
-                        navController = navController,
-                        userViewModel = userViewModel
-                    )
-                }
-            } else {
-                item {
-                    HomePostLoginUser(navController = navController, userViewModel = userViewModel)
-                }
-            }
+        if (isPilotView) {
+            HomePostLoginPilot(
+                navController = navController,
+                userViewModel = userViewModel
+            )
+        } else {
+            HomePostLoginUser(navController = navController, userViewModel = userViewModel)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomePostLoginPiloto(navController: NavController, userViewModel: UserViewModel) {
+fun HomePostLoginPilot(navController: NavController, userViewModel: UserViewModel) {
     Text(text = "Welcome, pilot!")
 
     var departureAirport by remember { mutableStateOf("") }
@@ -128,208 +118,244 @@ fun HomePostLoginPiloto(navController: NavController, userViewModel: UserViewMod
 
     val context = LocalContext.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.CenterHorizontally
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        state = rememberLazyListState(),
+        contentPadding = PaddingValues(16.dp),
+        reverseLayout = false,
     ) {
-        Text(
-            text = "Create a New Flight",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        TextField(
-            value = departureAirport,
-            onValueChange = { departureAirport = it },
-            label = { Text("Departure") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
-        TextField(
-            value = arrivalAirport,
-            onValueChange = { arrivalAirport = it },
-            label = { Text("Destination") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
-        TextField(
-            value = totalSeats,
-            onValueChange = { if (it.all { char -> char.isDigit() }) totalSeats = it },
-            label = { Text("Number of seats offered") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextField(
-                value = departureDate,
-                onValueChange = { departureDate = it},
-                label = { Text("Departure date") },
-                modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        showDatePicker(context) { selectedDate ->
-                            departureDate = selectedDate
-                        }
-                    }
+        item {
+            Text(
+                text = "Create a New Flight",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
-            IconButton(onClick = { showDatePicker(context) { selectedDate -> departureDate = selectedDate } }
-            ) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = "Select departure date")
-            }
-        }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
             TextField(
-                value = departureTime,
-                onValueChange = { departureTime = it},
-                label = { Text("Departure time") },
+                value = departureAirport,
+                onValueChange = { departureAirport = it },
+                label = { Text("Departure") },
                 modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        showTimePicker(context) { selectedTime ->
-                            departureTime = selectedTime
-                        }
-                    }
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
             )
-            IconButton(onClick = { showTimePicker(context) { selectedTime -> departureTime = selectedTime } }
-            ) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = "Select departure time")
-            }
-        }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
             TextField(
-                value = arrivalDate,
-                onValueChange = { arrivalDate = it },
-                label = { Text("Arrival date") },
+                value = arrivalAirport,
+                onValueChange = { arrivalAirport = it },
+                label = { Text("Destination") },
                 modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        showDatePicker(context) { selectedDate ->
-                            arrivalDate = selectedDate
-                        }
-                    }
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
             )
-            IconButton(onClick = { showDatePicker(context) { selectedDate -> arrivalDate = selectedDate } }
-            ) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = "Select arrival date")
-            }
-        }
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
             TextField(
-                value = arrivalTime,
-                onValueChange = { arrivalTime = it},
-                label = { Text("Arrival time") },
+                value = totalSeats,
+                onValueChange = { if (it.all { char -> char.isDigit() }) totalSeats = it },
+                label = { Text("Number of seats offered") },
                 modifier = Modifier
-                    .weight(1f)
-                    .clickable {
-                        showTimePicker(context) { selectedTime ->
-                            arrivalTime = selectedTime
-                        }
-                    }
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
             )
-            IconButton(onClick = { showTimePicker(context) { selectedTime -> arrivalTime = selectedTime } }
-            ) {
-                Icon(imageVector = Icons.Default.DateRange, contentDescription = "Select arrival time")
-            }
-        }
 
-        TextField(
-            value = price,
-            onValueChange = { input ->
-                val isNumeric = input.all { char -> char.isDigit() || char == '.' }
-                val hasValidDecimalPlaces = input.split('.').let {
-                    //Admite numeros sin decimales, o con 2 decimales como máximo
-                    it.size == 1 || (it.size == 2 && it[1].length <= 2)
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextField(
+                    value = departureDate,
+                    onValueChange = { departureDate = it },
+                    label = { Text("Departure date") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            showDatePicker(context) { selectedDate ->
+                                departureDate = selectedDate
+                            }
+                        }
+                )
+                IconButton(onClick = {
+                    showDatePicker(context) { selectedDate ->
+                        departureDate = selectedDate
+                    }
                 }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select departure date"
+                    )
+                }
+            }
 
-                if (isNumeric && hasValidDecimalPlaces) {
-                    price = input
-                } },
-            label = { Text("Price") },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextField(
+                    value = departureTime,
+                    onValueChange = { departureTime = it },
+                    label = { Text("Departure time") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            showTimePicker(context) { selectedTime ->
+                                departureTime = selectedTime
+                            }
+                        }
+                )
+                IconButton(onClick = {
+                    showTimePicker(context) { selectedTime ->
+                        departureTime = selectedTime
+                    }
+                }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select departure time"
+                    )
+                }
+            }
 
-        Button(
-            onClick = {
-                if(departureAirport.isNotEmpty() && arrivalAirport.isNotEmpty() && totalSeats.isNotEmpty() && departureDate.isNotEmpty() && departureTime.isNotEmpty() && arrivalDate.isNotEmpty() && arrivalTime.isNotEmpty() && price.isNotEmpty()) {
-                    val departureDateTimeParsed = LocalDateTime.parse("$departureDate $departureTime", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
-                    val arrivalDateTimeParsed = LocalDateTime.parse("$arrivalDate $arrivalTime", DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm"))
-                    val totalSeatsParseInt = totalSeats.toInt()
-                    val priceDouble = price.toDouble()
-                    if(totalSeatsParseInt > 0 && priceDouble > 0) {
-                        if (departureDateTimeParsed.isBefore(LocalDateTime.now()) || departureDateTimeParsed.isBefore(
-                                arrivalDateTimeParsed
-                            )
-                        ) {
-                            userViewModel.createFlight(
-                                departureAirport,
-                                arrivalAirport,
-                                totalSeatsParseInt,
-                                departureDateTimeParsed,
-                                arrivalDateTimeParsed,
-                                priceDouble
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextField(
+                    value = arrivalDate,
+                    onValueChange = { arrivalDate = it },
+                    label = { Text("Arrival date") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            showDatePicker(context) { selectedDate ->
+                                arrivalDate = selectedDate
+                            }
+                        }
+                )
+                IconButton(onClick = {
+                    showDatePicker(context) { selectedDate ->
+                        arrivalDate = selectedDate
+                    }
+                }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select arrival date"
+                    )
+                }
+            }
+
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextField(
+                    value = arrivalTime,
+                    onValueChange = { arrivalTime = it },
+                    label = { Text("Arrival time") },
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            showTimePicker(context) { selectedTime ->
+                                arrivalTime = selectedTime
+                            }
+                        }
+                )
+                IconButton(onClick = {
+                    showTimePicker(context) { selectedTime ->
+                        arrivalTime = selectedTime
+                    }
+                }
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Select arrival time"
+                    )
+                }
+            }
+
+            TextField(
+                value = price,
+                onValueChange = { input ->
+                    val isNumeric = input.all { char -> char.isDigit() || char == '.' }
+                    val hasValidDecimalPlaces = input.split('.').let {
+                        //Admite numeros sin decimales, o con 2 decimales como máximo
+                        it.size == 1 || (it.size == 2 && it[1].length <= 2)
+                    }
+
+                    if (isNumeric && hasValidDecimalPlaces) {
+                        price = input
+                    }
+                },
+                label = { Text("Price") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp)
+            )
+
+            Button(
+                onClick = {
+                    if (departureAirport.isNotEmpty() && arrivalAirport.isNotEmpty() && totalSeats.isNotEmpty() && departureDate.isNotEmpty() && departureTime.isNotEmpty() && arrivalDate.isNotEmpty() && arrivalTime.isNotEmpty() && price.isNotEmpty()) {
+                        val departureDateTimeParsed = LocalDateTime.parse(
+                            "$departureDate $departureTime",
+                            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
+                        )
+                        val arrivalDateTimeParsed = LocalDateTime.parse(
+                            "$arrivalDate $arrivalTime",
+                            DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm")
+                        )
+                        val totalSeatsParseInt = totalSeats.toInt()
+                        val priceDouble = price.toDouble()
+                        if (totalSeatsParseInt > 0 && priceDouble > 0) {
+                            if (departureDateTimeParsed.isBefore(LocalDateTime.now()) || departureDateTimeParsed.isBefore(
+                                    arrivalDateTimeParsed
+                                )
                             ) {
-                                navController.navigate("HomePostlogin")
+                                userViewModel.createFlight(
+                                    departureAirport,
+                                    arrivalAirport,
+                                    totalSeatsParseInt,
+                                    departureDateTimeParsed,
+                                    arrivalDateTimeParsed,
+                                    priceDouble
+                                ) {
+                                    navController.navigate("HomePostlogin")
+                                }
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "The dates you entered are not valid.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         } else {
                             Toast.makeText(
                                 context,
-                                "The dates you entered are not valid.",
+                                "You must offer at least 1 seat.",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }
                     } else {
                         Toast.makeText(
                             context,
-                            "You must offer at least 1 seat.",
-                            Toast.LENGTH_SHORT
+                            "Every field is mandatory, please complete all the fields.",
+                            Toast.LENGTH_LONG
                         ).show()
                     }
-                } else {
-                    Toast.makeText(
-                        context,
-                        "Every field is mandatory, please complete all the fields.",
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            },
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
-            Text(text = "Post new flight")
+                },
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text(text = "Post new flight")
+            }
         }
     }
 
@@ -344,7 +370,12 @@ private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
     val datePickerDialog = DatePickerDialog(
         context,
         { _: DatePicker, selectedYear: Int, selectedMonth: Int, selectedDay: Int ->
-            val formattedDate = "${String.format("%02d", selectedDay)}-${String.format("%02d", selectedMonth + 1)}-${selectedYear}"
+            val formattedDate = "${String.format("%02d", selectedDay)}-${
+                String.format(
+                    "%02d",
+                    selectedMonth + 1
+                )
+            }-${selectedYear}"
             onDateSelected(formattedDate)
         }, year, month, day
     )
@@ -360,7 +391,8 @@ private fun showTimePicker(context: Context, onTimeSelected: (String) -> Unit) {
     val timePickerDialog = TimePickerDialog(
         context,
         { _: TimePicker, selectedHour: Int, selectedMinute: Int ->
-            val formattedTime = "${String.format("%02d", selectedHour)}:${String.format("%02d", selectedMinute)}"
+            val formattedTime =
+                "${String.format("%02d", selectedHour)}:${String.format("%02d", selectedMinute)}"
             onTimeSelected(formattedTime)
         }, hour, minute, true // true para formato de 24 horas, false para formato de 12 horas
     )
@@ -368,8 +400,87 @@ private fun showTimePicker(context: Context, onTimeSelected: (String) -> Unit) {
 }
 
 @Composable
-fun HomePostLoginUser(navController: NavController, userViewModel: UserViewModel) {
+fun HomePostLoginUser(
+    navController: NavController,
+    userViewModel: UserViewModel
+) {
+    var flights by remember { mutableStateOf<List<Flight>>(emptyList()) }
+
+    // Fetch flights when the composable is first displayed
+    LaunchedEffect(Unit) {
+        userViewModel.getFlights { fetchedFlights ->
+            flights = fetchedFlights
+        }
+    }
+
     Text(text = "Welcome, user!")
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        state = rememberLazyListState(),
+        contentPadding = PaddingValues(16.dp),
+        reverseLayout = false,
+    ) {
+        items(flights.size) { index ->
+            val flight = flights[index]
+            FlightCard(flight)
+        }
+    }
+}
+
+@Composable
+private fun FlightCard(flight: Flight) {
+    Card(
+        shape = RectangleShape,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .background(Color.LightGray)
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = flight.pilotUsername, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = flight.departureDateTime.toString(),
+                    fontSize = 16.sp
+                ) /* TODO MOSTRAR SOLO DATE */
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            val availableSeats = flight.totalSeats - flight.passengers.size
+            Text(text = "Seats Available: ${availableSeats / flight.totalSeats}", fontSize = 16.sp)
+            Text(text = "Departure Location: ${flight.departureAirport}", fontSize = 16.sp)
+            Text(
+                text = "Departure Time: ${flight.departureDateTime}",
+                fontSize = 16.sp
+            ) /* TODO MOSTRAR SOLO DATE */
+            Text(
+                text = "Destination Location: ${flight.arrivalAirport}",
+                fontSize = 16.sp
+            ) /* TODO MOSTRAR SOLO TIME */
+            Text(
+                text = "Destination Time: ${flight.arrivalDateTime}",
+                fontSize = 16.sp
+            ) /* TODO MOSTRAR TIME Y DATE SEPARADOS */
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = "${flight.price}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Button(onClick = { /* Handle book now action */ }) {
+                    Text(text = "Book now!")
+                }
+            }
+        }
+    }
 }
 
 /*
