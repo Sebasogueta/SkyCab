@@ -30,12 +30,13 @@ import java.time.LocalDateTime
 
 // Dummy data TODO ELIMINAR DATOS DE PRUEBA
 val dummyUser = User("JohnDoe","","I am new Here!", mutableListOf())
+val dummyUserString = "John Doe"
 val dummyIncomingFlights = {
     mutableListOf(
         Flight(
             flightId = "1",
             pilotId = "PilotA",
-            passengers = mutableListOf(dummyUser),
+            passengers = mutableListOf(dummyUserString),
             totalSeats = 4,
             departureDateTime = LocalDateTime.of(2024, 6, 1, 14, 0).toString(),
             arrivalDateTime = LocalDateTime.of(2024, 6, 1, 16, 0).toString(),
@@ -47,7 +48,7 @@ val dummyIncomingFlights = {
         Flight(
             flightId = "2",
             pilotId = "PilotB",
-            passengers = mutableListOf(dummyUser),
+            passengers = mutableListOf(dummyUserString),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0).toString(),
             arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0).toString(),
@@ -59,7 +60,7 @@ val dummyIncomingFlights = {
         Flight(
             flightId = "3",
             pilotId = "PilotB",
-            passengers = mutableListOf(dummyUser),
+            passengers = mutableListOf(dummyUserString),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0).toString(),
             arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0).toString(),
@@ -71,7 +72,7 @@ val dummyIncomingFlights = {
         Flight(
             flightId = "4",
             pilotId = "PilotB",
-            passengers = mutableListOf(dummyUser),
+            passengers = mutableListOf(dummyUserString),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0).toString(),
             arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0).toString(),
@@ -88,7 +89,7 @@ val dummyPreviousFlights = {
         Flight(
             flightId = "5",
             pilotId = "PilotC",
-            passengers = mutableListOf(dummyUser),
+            passengers = mutableListOf(dummyUserString),
             totalSeats = 4,
             departureDateTime = LocalDateTime.of(2024, 5, 1, 14, 0).toString(),
             arrivalDateTime = LocalDateTime.of(2024, 5, 1, 16, 0).toString(),
@@ -100,7 +101,7 @@ val dummyPreviousFlights = {
         Flight(
             flightId = "6",
             pilotId = "PilotD",
-            passengers = mutableListOf(dummyUser),
+            passengers = mutableListOf(dummyUserString),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0).toString(),
             arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0).toString(),
@@ -112,7 +113,7 @@ val dummyPreviousFlights = {
         Flight(
             flightId = "7",
             pilotId = "PilotD",
-            passengers = mutableListOf(dummyUser),
+            passengers = mutableListOf(dummyUserString),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0).toString(),
             arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0).toString(),
@@ -124,7 +125,7 @@ val dummyPreviousFlights = {
         Flight(
             flightId = "8",
             pilotId = "PilotD",
-            passengers = mutableListOf(dummyUser),
+            passengers = mutableListOf(dummyUserString),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0).toString(),
             arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0).toString(),

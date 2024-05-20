@@ -377,7 +377,8 @@ class UserViewModel : ViewModel() {
                         // Verificar si hay asientos disponibles
                         if (totalSeats - passengers1.size > 0) {
                             val alreadyRegistered = passengers1.contains(currentUser.uid)
-                            if (alreadyRegistered) {
+                            val userIsThePilot = currentUser.uid == documentSnapshot.data!!["pilotId"] as String
+                            if (alreadyRegistered || userIsThePilot) {
                                 // TODO: Mostrar Toast - Ya registrado
                                 result(false)
                             } else {
