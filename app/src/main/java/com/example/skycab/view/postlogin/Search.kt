@@ -170,7 +170,6 @@ private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
     datePickerDialog.show()
 }
 
-
 @Composable
 private fun FlightCard(flight: Flight, userViewModel: UserViewModel) {
     Card(
@@ -190,15 +189,22 @@ private fun FlightCard(flight: Flight, userViewModel: UserViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = flight.pilotId, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                var pilotUser by remember { mutableStateOf("Pilot") }
+                LaunchedEffect(flight.pilotId) {
+                    userViewModel.getUserById(flight.pilotId) { name ->
+                        pilotUser = name
+                    }
+                }
+
+                Text(text = pilotUser, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text(
                     text = flight.departureDateTime.toString(),
                     fontSize = 16.sp
                 ) /* TODO MOSTRAR SOLO DATE */
             }
             Spacer(modifier = Modifier.height(8.dp))
-            val availableSeats = flight.totalSeats - flight.passengers.size
-            Text(text = "Seats Available: ${availableSeats / flight.totalSeats}", fontSize = 16.sp)
+            val availableSeats = (flight.totalSeats - flight.passengers.size)
+            Text(text = "Seats Available: ${availableSeats}/${flight.totalSeats}", fontSize = 16.sp)
             Text(text = "Departure Location: ${flight.departureAirport}", fontSize = 16.sp)
             Text(
                 text = "Departure Time: ${flight.departureDateTime}",

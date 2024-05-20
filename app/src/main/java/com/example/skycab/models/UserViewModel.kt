@@ -230,6 +230,34 @@ class UserViewModel : ViewModel() {
 
     }
 
+    fun getUserById(userId:String, callback: (String) -> Unit) {
+
+        val db = FirebaseFirestore.getInstance()
+        val usersRef = db.collection("users")
+        val userDocument = usersRef.document(userId)
+        var username = "User"
+
+
+        userDocument.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val userData = documentSnapshot.toObject(User::class.java)
+                userData?.let { user ->
+                    username = user.username
+                    callback(username)
+                }
+            } else {
+                username = "User"
+                callback(username)
+            }
+            callback.invoke(username)
+        }.addOnFailureListener { e ->
+        // Manejo de errores al obtener el documento del usuario
+            callback("Unknown user")
+        }
+
+
+    }
+
     fun getUserBio(callback: (String) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val currentUser = auth.currentUser
