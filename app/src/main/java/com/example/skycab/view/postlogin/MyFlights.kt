@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -51,6 +52,14 @@ fun MyFlights(
                 fontFamily = FontTitle
             )
             Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "EditProfile",
+                modifier = Modifier
+                    .clickable { navController.navigate("EditProfile") }
+                    .size(35.dp)
+                    .align(Alignment.CenterVertically)
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -65,7 +74,92 @@ fun MyFlights(
 
 @Composable
 fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewModel){
-    Text(text = "Pilot view")
+    var flightsList by remember { mutableStateOf(listOf<Flight>()) }
+    var incomingFlights by remember { mutableStateOf(listOf<Flight>()) }
+    var previousFlights by remember { mutableStateOf(listOf<Flight>()) }
+
+    LaunchedEffect(Unit) {
+        userViewModel.getPilotFlights { flights ->
+            flightsList = flights
+            incomingFlights = flights.filter { !it.ended }
+            previousFlights = flights.filter { it.ended }
+        }
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = "Incoming flights",
+            color = text,
+            fontSize = 30.sp,
+            fontFamily = FontTitle,
+            modifier = Modifier.align(Alignment.Start)
+        )
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(top = 8.dp)
+        ) {
+            if (incomingFlights.isNotEmpty()) {
+                items(incomingFlights) { flight ->
+                    FlightItem(flight, navController, userViewModel)
+                }
+            } else {
+                item {
+                    Text(
+                        text = "You have no incoming flights.",
+                        color = text,
+                        fontFamily = FontText,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Text(
+            text = "Previous flights",
+            color = text,
+            fontSize = 30.sp,
+            fontFamily = FontTitle,
+            modifier = Modifier.align(Alignment.Start)
+        )
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .padding(top = 8.dp)
+        ) {
+            if (previousFlights.isNotEmpty()) {
+                items(previousFlights) { flight ->
+                    FlightItem(flight, navController, userViewModel)
+                }
+            } else {
+                item {
+                    Text(
+                        text = "You have no previous flights.",
+                        color = text,
+                        fontFamily = FontText,
+                        fontSize = 20.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+    }
+
 }
 
 @SuppressLint("MutableCollectionMutableState")

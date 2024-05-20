@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -61,13 +62,28 @@ fun Search(
         verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            text = "Search a flight",
-            fontSize = 30.sp,
-            modifier = Modifier.padding(16.dp),
-            color = text,
-            fontFamily = FontTitle
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = "Search a flight",
+                fontSize = 30.sp,
+                modifier = Modifier.padding(16.dp),
+                color = text,
+                fontFamily = FontTitle
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "EditProfile",
+                modifier = Modifier
+                    .clickable { navController.navigate("EditProfile") }
+                    .size(35.dp)
+                    .align(Alignment.CenterVertically)
+            )
+        }
 
         TextField(
             value = departureCity,

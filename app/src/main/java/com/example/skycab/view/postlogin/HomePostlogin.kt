@@ -334,7 +334,7 @@ fun HomePostLoginPilot(navController: NavController, userViewModel: UserViewMode
                         val totalSeatsParseInt = totalSeats.toInt()
                         val priceDouble = price.toDouble()
                         if (totalSeatsParseInt > 0 && priceDouble > 0) {
-                            if (departureDateTimeParsed.isBefore(LocalDateTime.now()) || departureDateTimeParsed.isBefore(
+                            if (departureDateTimeParsed.isAfter(LocalDateTime.now()) && departureDateTimeParsed.isBefore(
                                     arrivalDateTimeParsed
                                 )
                             ) {
@@ -347,6 +347,11 @@ fun HomePostLoginPilot(navController: NavController, userViewModel: UserViewMode
                                     priceDouble
                                 ) {
                                     navController.navigate("HomePostlogin")
+                                    Toast.makeText(
+                                        context,
+                                        "The flight has been posted.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             } else {
                                 Toast.makeText(

@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -362,6 +363,11 @@ class UserViewModel : ViewModel() {
                         "Flight created successfully with ID: ${documentReference.id}"
                     )
                     documentReference.update("flightId", documentReference.id)
+                    //guardar id del vuelo en el user (piloto)
+                    val usersRef = db.collection("users")
+                    val pilotDocumentRef = usersRef.document(pilotId)
+                    pilotDocumentRef.update("pilotFlightIds", FieldValue.arrayUnion(documentReference.id))
+                    function()
                 }
                 .addOnFailureListener { e ->
                     Log.e("Firestore", "Error creating flight", e)
@@ -462,6 +468,13 @@ class UserViewModel : ViewModel() {
                             val flightsList = mutableListOf<Flight>()
                             for (document in querySnapshot.documents) {
                                 document.toObject(Flight::class.java)?.let { flight ->
+                                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                                    val arrivalDateTime = LocalDateTime.parse(flight.arrivalDateTime, formatter)
+                                    if (arrivalDateTime.isBefore(LocalDateTime.now())) {
+                                        flight.ended = true
+                                    } else {
+                                        flight.ended = false
+                                    }
                                     flightsList.add(flight)
                                 }
                             }
