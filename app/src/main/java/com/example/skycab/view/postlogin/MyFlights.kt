@@ -29,7 +29,7 @@ import java.sql.Date
 import java.time.LocalDateTime
 
 // Dummy data TODO ELIMINAR DATOS DE PRUEBA
-val dummyUser = User("JohnDoe","","I am new Here!", mutableListOf())
+val dummyUser = User("JohnDoe","","I am new Here!", mutableListOf(), mutableListOf())
 val dummyUserString = "John Doe"
 val dummyIncomingFlights = {
     mutableListOf(

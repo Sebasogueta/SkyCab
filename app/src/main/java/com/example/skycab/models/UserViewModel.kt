@@ -6,6 +6,7 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -84,8 +85,9 @@ class UserViewModel : ViewModel() {
                             username,
                             "",
                             "I am new here!",
+                            mutableListOf(),
                             mutableListOf()
-                        ) /* TODO AGREGAR MYFLIGHTS */
+                        )
 
                         // Verificar si el usuario ya tiene un documento en Firestore
                         currentUser?.uid?.let { userId ->
@@ -381,6 +383,89 @@ class UserViewModel : ViewModel() {
             }
             .addOnFailureListener { exception ->
                 Log.e("Firestore", "Error getting flights: ", exception)
+                callback(emptyList())
+            }
+    }
+    fun getUserFlights(callback: (List<Flight>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        val userId = currentUser!!.uid
+
+        val userRef = db.collection("users").document(userId)
+
+        userRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val userFlightIds = documentSnapshot.get("flightIds") as? List<String> ?: emptyList<String>()
+                    if (userFlightIds.isEmpty()) {
+                        callback(emptyList())
+                        return@addOnSuccessListener
+                    }
+                    db.collection("flights")
+                        .whereIn(FieldPath.documentId(), userFlightIds)
+                        .get()
+                        .addOnSuccessListener { querySnapshot ->
+                            val flightsList = mutableListOf<Flight>()
+                            for (document in querySnapshot.documents) {
+                                document.toObject(Flight::class.java)?.let { flight ->
+                                    flightsList.add(flight)
+                                }
+                            }
+                            callback(flightsList)
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e("Firestore", "Error getting flights: ", exception)
+                            callback(emptyList())
+                        }
+                } else {
+                    callback(emptyList())
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error getting user document: ", exception)
+                callback(emptyList())
+            }
+    }
+
+    fun getPilotFlights(callback: (List<Flight>) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        val userId = currentUser!!.uid
+
+        val userRef = db.collection("users").document(userId)
+
+        userRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val pilotFlightIds = documentSnapshot.get("pilotFlightIds") as? List<String> ?: emptyList<String>()
+                    if (pilotFlightIds.isEmpty()) {
+                        callback(emptyList())
+                        return@addOnSuccessListener
+                    }
+                    db.collection("flights")
+                        .whereIn(FieldPath.documentId(), pilotFlightIds)
+                        .get()
+                        .addOnSuccessListener { querySnapshot ->
+                            val flightsList = mutableListOf<Flight>()
+                            for (document in querySnapshot.documents) {
+                                document.toObject(Flight::class.java)?.let { flight ->
+                                    flightsList.add(flight)
+                                }
+                            }
+                            callback(flightsList)
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.e("Firestore", "Error getting pilot flights: ", exception)
+                            callback(emptyList())
+                        }
+                } else {
+                    callback(emptyList())
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.e("Firestore", "Error getting pilot user document: ", exception)
                 callback(emptyList())
             }
     }
