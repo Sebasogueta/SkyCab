@@ -305,11 +305,11 @@ class UserViewModel : ViewModel() {
 
         if (currentUser != null) {
             val flightsRef = db.collection("flights")
-            val pilotEmail = currentUser.email
+            val pilotId = currentUser.uid
 
             // Crear un mapa con los datos del vuelo
             val flightData = hashMapOf(
-                "pilotEmail" to pilotEmail,
+                "pilotId" to pilotId,
                 "passengers" to mutableListOf<String>(),
                 "totalSeats" to offeredSeats,
                 "departureDateTime" to departureDateTime.toString(),
