@@ -13,7 +13,7 @@ data class Flight(
     val departureAirport: String,
     val arrivalAirport: String,
     val publicationDate: String,
-    val ended: Boolean, // diferenciar entre próximos vuelos (false), y los vuelos pasados(true).
+    var ended: Boolean, // diferenciar entre próximos vuelos (false), y los vuelos pasados(true).
     val price: Double
     ){
     constructor() : this("", "",mutableListOf(), 0, LocalDateTime.now().toString(), LocalDateTime.now().toString(),"", "", Date().toString(), false,0.0,)

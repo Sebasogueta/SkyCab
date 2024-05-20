@@ -33,6 +33,8 @@ import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
 import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Calendar
 
 
@@ -50,14 +52,7 @@ fun Search(
     var flights by remember { mutableStateOf<List<Flight>>(emptyList()) }
     var flightsFiltered by remember { mutableStateOf<List<Flight>>(emptyList()) }
     val userId by remember { mutableStateOf(userViewModel.getUserId()) }
-
-    // Fetch flights when the composable is first displayed
-    LaunchedEffect(Unit) {
-        userViewModel.getFlights { fetchedFlights ->
-            flights = fetchedFlights
-            flightsFiltered = fetchedFlights
-        }
-    }
+    var isFirstTime by remember { mutableStateOf(true) }
 
     Column(
         modifier = Modifier
@@ -99,6 +94,7 @@ fun Search(
             verticalAlignment = Alignment.CenterVertically
         ) {
             TextField(
+                readOnly = true,
                 value = date,
                 onValueChange = { date = it },
                 label = { Text("Date (DD-MM-YYYY)") },
@@ -119,6 +115,11 @@ fun Search(
 
         Button(
             onClick = {
+                isFirstTime = false
+                userViewModel.getFlights { fetchedFlights ->
+                    flights = fetchedFlights
+                    flightsFiltered = fetchedFlights
+                }
                 var formatedDate2 = ""
                 if(date.isNotEmpty()) {
                     val formatedDate1 = date1Format.parse(date)
@@ -135,7 +136,7 @@ fun Search(
         ) {
             Text(text = "Search")
         }
-        if (flightsFiltered.isEmpty()) {
+        if (flightsFiltered.isEmpty() && !isFirstTime) {
             Text(
                 text = "No flights match your criteria.",
                 fontSize = 16.sp,
@@ -168,6 +169,8 @@ private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
             onDateSelected(formattedDate)
         }, year, month, day
     )
+    datePickerDialog.datePicker.minDate = calendar.timeInMillis
+
     datePickerDialog.show()
 }
 
@@ -175,6 +178,15 @@ private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
 private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: String) {
     var flight by remember { mutableStateOf(flight1) }
     var booked by remember { mutableStateOf(flight1.passengers.contains(userId)) }
+
+    // Convertir strings a LocalDateTime
+    val departureDateTime = LocalDateTime.parse(flight.departureDateTime)
+    val arrivalDateTime = LocalDateTime.parse(flight.arrivalDateTime)
+    // Formato de fecha y hora
+    val departureDate = departureDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    val departureTime = departureDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+    val arrivalTime = arrivalDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+
     Card(
         shape = RectangleShape,
         modifier = Modifier
@@ -201,33 +213,33 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
 
                 Text(text = pilotUser, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text(
-                    text = flight.departureDateTime.toString(),
+                    text = departureDate,
                     fontSize = 16.sp
-                ) /* TODO MOSTRAR SOLO DATE */
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             val availableSeats = (flight.totalSeats - flight.passengers.size)
             Text(text = "Seats Available: ${availableSeats}/${flight.totalSeats}", fontSize = 16.sp)
             Text(text = "Departure Location: ${flight.departureAirport}", fontSize = 16.sp)
             Text(
-                text = "Departure Time: ${flight.departureDateTime}",
+                text = "Departure Time: $departureTime",
                 fontSize = 16.sp
-            ) /* TODO MOSTRAR SOLO DATE */
+            )
             Text(
                 text = "Destination Location: ${flight.arrivalAirport}",
                 fontSize = 16.sp
-            ) /* TODO MOSTRAR SOLO TIME */
+            )
             Text(
-                text = "Destination Time: ${flight.arrivalDateTime}",
+                text = "Destination Time: $arrivalTime",
                 fontSize = 16.sp
-            ) /* TODO MOSTRAR TIME Y DATE SEPARADOS */
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "${flight.price}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(text = "${flight.price}€", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Button(onClick = {
                     if(!booked) {
                         userViewModel.bookAFlight(flight.flightId) { success ->

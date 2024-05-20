@@ -1,5 +1,6 @@
 package com.example.skycab.view.postlogin
 
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
@@ -165,8 +166,13 @@ fun HomePostLoginPilot(navController: NavController, userViewModel: UserViewMode
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
+                    readOnly = true,
                     value = departureDate,
-                    onValueChange = { departureDate = it },
+                    onValueChange = {
+
+                        departureDate = it
+
+                    },
                     label = { Text("Departure date") },
                     modifier = Modifier
                         .weight(1f)
@@ -196,8 +202,13 @@ fun HomePostLoginPilot(navController: NavController, userViewModel: UserViewMode
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
+                    readOnly = true,
                     value = departureTime,
-                    onValueChange = { departureTime = it },
+                    onValueChange = {
+
+                        departureTime = it
+
+                    },
                     label = { Text("Departure time") },
                     modifier = Modifier
                         .weight(1f)
@@ -227,8 +238,13 @@ fun HomePostLoginPilot(navController: NavController, userViewModel: UserViewMode
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
+                    readOnly = true,
                     value = arrivalDate,
-                    onValueChange = { arrivalDate = it },
+                    onValueChange = {
+
+                        arrivalDate = it
+
+                    },
                     label = { Text("Arrival date") },
                     modifier = Modifier
                         .weight(1f)
@@ -258,8 +274,11 @@ fun HomePostLoginPilot(navController: NavController, userViewModel: UserViewMode
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 TextField(
+                    readOnly = true,
                     value = arrivalTime,
-                    onValueChange = { arrivalTime = it },
+                    onValueChange = {
+                        arrivalTime = it
+                    },
                     label = { Text("Arrival time") },
                     modifier = Modifier
                         .weight(1f)
@@ -360,6 +379,7 @@ fun HomePostLoginPilot(navController: NavController, userViewModel: UserViewMode
 
 }
 
+@SuppressLint("DefaultLocale")
 private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
@@ -378,6 +398,8 @@ private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
             onDateSelected(formattedDate)
         }, year, month, day
     )
+    datePickerDialog.datePicker.minDate = calendar.timeInMillis
+
     datePickerDialog.show()
 }
 
@@ -431,6 +453,16 @@ fun HomePostLoginUser(
 private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: String) {
     var flight by remember { mutableStateOf(flight1) }
     var booked by remember { mutableStateOf(flight1.passengers.contains(userId)) }
+
+    // Convertir strings a LocalDateTime
+    val departureDateTime = LocalDateTime.parse(flight.departureDateTime)
+    val arrivalDateTime = LocalDateTime.parse(flight.arrivalDateTime)
+    // Formato de fecha y hora
+    val departureDate =
+        departureDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    val departureTime = departureDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+    val arrivalTime = arrivalDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+
     Card(
         shape = RectangleShape,
         modifier = Modifier
@@ -457,35 +489,35 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
 
                 Text(text = pilotUser, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text(
-                    text = flight.departureDateTime.toString(),
+                    text = departureDate,
                     fontSize = 16.sp
-                ) /* TODO MOSTRAR SOLO DATE */
+                )
             }
             Spacer(modifier = Modifier.height(8.dp))
             val availableSeats = (flight.totalSeats - flight.passengers.size)
             Text(text = "Seats Available: ${availableSeats}/${flight.totalSeats}", fontSize = 16.sp)
             Text(text = "Departure Location: ${flight.departureAirport}", fontSize = 16.sp)
             Text(
-                text = "Departure Time: ${flight.departureDateTime}",
+                text = "Departure Time: $departureTime",
                 fontSize = 16.sp
-            ) /* TODO MOSTRAR SOLO DATE */
+            )
             Text(
                 text = "Destination Location: ${flight.arrivalAirport}",
                 fontSize = 16.sp
-            ) /* TODO MOSTRAR SOLO TIME */
+            )
             Text(
-                text = "Destination Time: ${flight.arrivalDateTime}",
+                text = "Destination Time: $arrivalTime",
                 fontSize = 16.sp
-            ) /* TODO MOSTRAR TIME Y DATE SEPARADOS */
+            )
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = "${flight.price}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(text = "${flight.price}€", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Button(onClick = {
-                    if(!booked) {
+                    if (!booked) {
                         userViewModel.bookAFlight(flight.flightId) { success ->
                             if (success) {
                                 userViewModel.getFlight(flight.flightId) { updatedFlight ->
@@ -508,8 +540,9 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
                             }
                         }
 
-                    }                    }) {
-                    Text(text = if(booked) "Already booked!" else "Book now!")
+                    }
+                }) {
+                    Text(text = if (booked) "Already booked!" else "Book now!")
                 }
             }
         }

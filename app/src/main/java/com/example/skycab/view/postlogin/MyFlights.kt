@@ -1,5 +1,6 @@
 package com.example.skycab.view.postlogin
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -7,13 +8,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,120 +21,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.skycab.models.Flight
-import com.example.skycab.models.User
 import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.*
-import java.sql.Date
 import java.time.LocalDateTime
-
-// Dummy data TODO ELIMINAR DATOS DE PRUEBA
-val dummyUser = User("JohnDoe","","I am new Here!", mutableListOf(), mutableListOf())
-val dummyUserString = "John Doe"
-val dummyIncomingFlights = {
-    mutableListOf(
-        Flight(
-            flightId = "1",
-            pilotId = "PilotA",
-            passengers = mutableListOf(dummyUserString),
-            totalSeats = 4,
-            departureDateTime = LocalDateTime.of(2024, 6, 1, 14, 0).toString(),
-            arrivalDateTime = LocalDateTime.of(2024, 6, 1, 16, 0).toString(),
-            departureAirport = "JFK",
-            arrivalAirport = "LAX",
-            publicationDate = Date(2024, 5, 1).toString(),
-            ended = false, price = 200.0
-        ),
-        Flight(
-            flightId = "2",
-            pilotId = "PilotB",
-            passengers = mutableListOf(dummyUserString),
-            totalSeats = 6,
-            departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0).toString(),
-            arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0).toString(),
-            departureAirport = "ORD",
-            arrivalAirport = "ATL",
-            publicationDate = Date(2024, 5, 2).toString(),
-            ended = false, price = 200.0
-        ),
-        Flight(
-            flightId = "3",
-            pilotId = "PilotB",
-            passengers = mutableListOf(dummyUserString),
-            totalSeats = 6,
-            departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0).toString(),
-            arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0).toString(),
-            departureAirport = "ORD",
-            arrivalAirport = "ATL",
-            publicationDate = Date(2024, 5, 2).toString(),
-            ended = false, price = 200.0
-        ),
-        Flight(
-            flightId = "4",
-            pilotId = "PilotB",
-            passengers = mutableListOf(dummyUserString),
-            totalSeats = 6,
-            departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0).toString(),
-            arrivalDateTime = LocalDateTime.of(2024, 6, 2, 12, 0).toString(),
-            departureAirport = "ORD",
-            arrivalAirport = "ATL",
-            publicationDate = Date(2024, 5, 2).toString(),
-            ended = false, price = 200.0
-        )
-
-    )
-}
-val dummyPreviousFlights = {
-    mutableListOf(
-        Flight(
-            flightId = "5",
-            pilotId = "PilotC",
-            passengers = mutableListOf(dummyUserString),
-            totalSeats = 4,
-            departureDateTime = LocalDateTime.of(2024, 5, 1, 14, 0).toString(),
-            arrivalDateTime = LocalDateTime.of(2024, 5, 1, 16, 0).toString(),
-            departureAirport = "MIA",
-            arrivalAirport = "BOS",
-            publicationDate = Date(2024, 4, 1).toString(),
-            ended = true, price = 200.0
-        ),
-        Flight(
-            flightId = "6",
-            pilotId = "PilotD",
-            passengers = mutableListOf(dummyUserString),
-            totalSeats = 6,
-            departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0).toString(),
-            arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0).toString(),
-            departureAirport = "SFO",
-            arrivalAirport = "SEA",
-            publicationDate = Date(2024, 3, 15).toString(),
-            ended = true, price = 200.0
-        ),
-        Flight(
-            flightId = "7",
-            pilotId = "PilotD",
-            passengers = mutableListOf(dummyUserString),
-            totalSeats = 6,
-            departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0).toString(),
-            arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0).toString(),
-            departureAirport = "SFO",
-            arrivalAirport = "SEA",
-            publicationDate = Date(2024, 3, 15).toString(),
-            ended = true, price = 200.0
-        ),
-        Flight(
-            flightId = "8",
-            pilotId = "PilotD",
-            passengers = mutableListOf(dummyUserString),
-            totalSeats = 6,
-            departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0).toString(),
-            arrivalDateTime = LocalDateTime.of(2024, 4, 15, 12, 0).toString(),
-            departureAirport = "SFO",
-            arrivalAirport = "SEA",
-            publicationDate = Date(2024, 3, 15).toString(),
-            ended = true, price = 200.0
-        )
-    )
-}
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun MyFlights(
@@ -178,11 +67,21 @@ fun MyFlights(
 fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewModel){
     Text(text = "Pilot view")
 }
+
+@SuppressLint("MutableCollectionMutableState")
 @Composable
 fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel){
+    var flightsList by remember { mutableStateOf(listOf<Flight>()) }
+    var incomingFlights by remember { mutableStateOf(listOf<Flight>()) }
+    var previousFlights by remember { mutableStateOf(listOf<Flight>()) }
 
-    val dummyIncomingFlights: MutableList<Flight> = dummyIncomingFlights.invoke() /* TODO BORRAR DATOS DE PUREBA */
-    val dummyPreviousFlights: MutableList<Flight> = dummyPreviousFlights.invoke() /* TODO BORRAR DATOS DE PUREBA */
+    LaunchedEffect(Unit) {
+        userViewModel.getUserFlights { flights ->
+            flightsList = flights
+            incomingFlights = flights.filter { !it.ended }
+            previousFlights = flights.filter { it.ended }
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -205,9 +104,9 @@ fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel
                 .weight(1f)
                 .padding(top = 8.dp)
         ) {
-            if (dummyIncomingFlights.isNotEmpty()) {
-                items(dummyIncomingFlights) { flight ->
-                    FlightItem(flight, navController)
+            if (incomingFlights.isNotEmpty()) {
+                items(incomingFlights) { flight ->
+                    FlightItem(flight, navController, userViewModel)
                 }
             } else {
                 item {
@@ -239,9 +138,9 @@ fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel
                 .weight(1f)
                 .padding(top = 8.dp)
         ) {
-            if (dummyPreviousFlights.isNotEmpty()) {
-                items(dummyPreviousFlights) { flight ->
-                    FlightItem(flight, navController)
+            if (previousFlights.isNotEmpty()) {
+                items(previousFlights) { flight ->
+                    FlightItem(flight, navController, userViewModel)
                 }
             } else {
                 item {
@@ -260,7 +159,18 @@ fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel
 }
 
 @Composable
-fun FlightItem(flight: Flight, navController: NavHostController) {
+fun FlightItem(flight1: Flight, navController: NavHostController, userViewModel: UserViewModel) {
+    var flight by remember { mutableStateOf(flight1) }
+
+    // Convertir strings a LocalDateTime
+    val departureDateTime = LocalDateTime.parse(flight.departureDateTime)
+    val arrivalDateTime = LocalDateTime.parse(flight.arrivalDateTime)
+
+    // Formato de fecha y hora
+    val departureDate = departureDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    val departureTime = departureDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+    val arrivalTime = arrivalDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -270,26 +180,47 @@ fun FlightItem(flight: Flight, navController: NavHostController) {
     ) {
         Row(
             modifier = Modifier.clickable(onClick = {
-                navController.navigate("FlightDetails")
+                navController.navigate("FlightDetails/${flight.flightId}")
             })
         ) {
-            Text(
-                text = "${flight.departureAirport} -> ${flight.arrivalAirport}\n${flight.departureDateTime} - ${flight.arrivalDateTime}",
+            Column(
                 modifier = Modifier
                     .weight(4f)
-                    .padding(8.dp),
-                color = background,
-                fontSize = 19.sp
-            )
+                    .padding(8.dp)
+            ) {
+                Text(
+                    text = "From: ${flight.departureAirport} To: ${flight.arrivalAirport}",
+                    color = background,
+                    fontSize = 19.sp
+                )
+                Text(
+                    text = departureDate,
+                    color = background,
+                    fontSize = 19.sp
+                )
+                Text(
+                    text = "$departureTime - $arrivalTime",
+                    color = background,
+                    fontSize = 19.sp
+                )
+            }
             IconButton(
                 onClick = {
-                    // Handle favorite action
+                    userViewModel.unbookAFlight(flight.flightId) { success ->
+                        if (success) {
+                            userViewModel.getFlight(flight.flightId) { updatedFlight ->
+                                flight = updatedFlight
+                            }
+                        } else {
+                            println("fallo")
+                        }
+                    }
                 },
                 modifier = Modifier.weight(1f)
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Favorite,
-                    contentDescription = "",
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Remove flight",
                     tint = Color.Red,
                     modifier = Modifier.size(40.dp)
                 )
@@ -298,6 +229,4 @@ fun FlightItem(flight: Flight, navController: NavHostController) {
     }
     Spacer(modifier = Modifier.height(10.dp))
 }
-
-
 

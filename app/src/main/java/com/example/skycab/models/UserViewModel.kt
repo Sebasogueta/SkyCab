@@ -12,6 +12,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 
 class UserViewModel : ViewModel() {
@@ -412,6 +413,13 @@ class UserViewModel : ViewModel() {
                             val flightsList = mutableListOf<Flight>()
                             for (document in querySnapshot.documents) {
                                 document.toObject(Flight::class.java)?.let { flight ->
+                                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                                    val arrivalDateTime = LocalDateTime.parse(flight.arrivalDateTime, formatter)
+                                    if (arrivalDateTime.isBefore(LocalDateTime.now())) {
+                                        flight.ended = true
+                                    } else {
+                                        flight.ended = false
+                                    }
                                     flightsList.add(flight)
                                 }
                             }
