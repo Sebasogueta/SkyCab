@@ -200,7 +200,10 @@ class UserViewModel : ViewModel() {
         }
 
     }
-
+    fun getUserId(): String {
+        val currentUser = auth.currentUser
+        return currentUser!!.uid
+    }
     fun getUser(callback: (String) -> Unit) {
 
         val currentUser = this.auth.currentUser
@@ -554,6 +557,99 @@ class UserViewModel : ViewModel() {
                 }
         }
     }
+
+    fun unbookAFlight(flightId: String, result: (Boolean) -> Unit) {
+
+        val db = FirebaseFirestore.getInstance()
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            val usersRef = db.collection("users")
+            val userDocumentRef = usersRef.document(currentUser.uid)
+            val flightsRef = db.collection("flights")
+            val flightDocumentRef = flightsRef.document(flightId)
+
+            flightDocumentRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val passengers1 = documentSnapshot.data!!["passengers"] as List<String>
+
+                            val isRegistered = passengers1.contains(currentUser.uid)
+                            if (isRegistered) {
+                                // Agregar al usuario actual a la lista de pasajeros
+                                val newPassengersList = passengers1.toMutableList()
+                                newPassengersList.removeIf { it == currentUser.uid }
+
+                                // Actualizar el documento en Firestore con la nueva lista de pasajeros
+                                flightDocumentRef.update("passengers", newPassengersList)
+                                    .addOnSuccessListener {
+                                        // TODO: Mostrar Toast - Actualización exitosa
+                                        userDocumentRef.get()
+                                            .addOnSuccessListener { documentSnapshot ->
+                                                if (documentSnapshot.exists()) {
+                                                    val flightIds =
+                                                        documentSnapshot.data!!["flightIds"] as List<String>
+
+                                                    val newFlightList = flightIds.toMutableList()
+                                                    newFlightList.removeIf { it == flightId }
+
+                                                    userDocumentRef.update(
+                                                        "flightIds",
+                                                        newFlightList
+                                                    )
+                                                        .addOnCompleteListener { task ->
+                                                            if (task.isSuccessful) {
+                                                                Log.d(
+                                                                    "Firestore",
+                                                                    "FlightIDs list updated"
+                                                                )
+                                                                result(true)
+                                                            } else {
+                                                                Log.e(
+                                                                    "Firestore",
+                                                                    "Error updating FlightIDs: ${task.exception}"
+                                                                )
+                                                                result(false)
+                                                            }
+                                                        }
+                                                } else {
+                                                    result(false)
+                                                }
+                                            }
+                                            .addOnFailureListener { e ->
+                                                // TODO: Manejar el fallo de la actualización
+                                                result(false)
+                                            }
+                                    }
+                            }
+
+
+                    } else {
+                        result(false)
+                    }
+
+                }
+                .addOnFailureListener { e ->
+                    // TODO: Manejar el fallo
+                    result(false)
+                }
+        }
+    }
+    fun getFlight(flightId: String, callback: (Flight) -> Unit) {
+        val db = FirebaseFirestore.getInstance()
+        val flightRef = db.collection("flights").document(flightId)
+
+        flightRef.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val flight = documentSnapshot.toObject(Flight::class.java)
+                flight?.let { callback(it) }
+            }
+        }.addOnFailureListener { e ->
+            // Manejo de errores
+            Log.e("Firestore", "Error getting flight", e)
+        }
+    }
+
 }
 
 /*

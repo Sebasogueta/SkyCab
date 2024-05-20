@@ -49,6 +49,7 @@ fun Search(
     val context = LocalContext.current
     var flights by remember { mutableStateOf<List<Flight>>(emptyList()) }
     var flightsFiltered by remember { mutableStateOf<List<Flight>>(emptyList()) }
+    val userId by remember { mutableStateOf(userViewModel.getUserId()) }
 
     // Fetch flights when the composable is first displayed
     LaunchedEffect(Unit) {
@@ -147,7 +148,7 @@ fun Search(
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 items(flightsFiltered) { flight ->
-                    FlightCard(flight, userViewModel)
+                    FlightCard(flight, userViewModel, userId)
                 }
             }
         }
@@ -171,7 +172,9 @@ private fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
 }
 
 @Composable
-private fun FlightCard(flight: Flight, userViewModel: UserViewModel) {
+private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: String) {
+    var flight by remember { mutableStateOf(flight1) }
+    var booked by remember { mutableStateOf(flight1.passengers.contains(userId)) }
     Card(
         shape = RectangleShape,
         modifier = Modifier
@@ -225,14 +228,32 @@ private fun FlightCard(flight: Flight, userViewModel: UserViewModel) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(text = "${flight.price}", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                Button(onClick = { userViewModel.bookAFlight(flight.flightId) { success ->
-                    if(success){
-                        println("correcto")
+                Button(onClick = {
+                    if(!booked) {
+                        userViewModel.bookAFlight(flight.flightId) { success ->
+                            if (success) {
+                                userViewModel.getFlight(flight.flightId) { updatedFlight ->
+                                    flight = updatedFlight
+                                }
+                                booked = !booked
+                            } else {
+                                println("fallo")
+                            }
+                        }
                     } else {
-                        println("fallo")
-                    }
-                } }) {
-                    Text(text = "Book now!")
+                        userViewModel.unbookAFlight(flight.flightId) { success ->
+                            if (success) {
+                                userViewModel.getFlight(flight.flightId) { updatedFlight ->
+                                    flight = updatedFlight
+                                }
+                                booked = !booked
+                            } else {
+                                println("fallo")
+                            }
+                        }
+
+                    }                    }) {
+                    Text(text = if(booked) "Already booked!" else "Book now!")
                 }
             }
         }
