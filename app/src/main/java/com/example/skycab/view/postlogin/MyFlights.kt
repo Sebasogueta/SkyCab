@@ -82,7 +82,9 @@ fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewMode
         userViewModel.getPilotFlights { flights ->
             flightsList = flights
             incomingFlights = flights.filter { !it.ended }
+                .sortedBy { LocalDateTime.parse(it.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) }
             previousFlights = flights.filter { it.ended }
+                .sortedByDescending { LocalDateTime.parse(it.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) }
         }
     }
 
@@ -173,7 +175,9 @@ fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel
         userViewModel.getUserFlights { flights ->
             flightsList = flights
             incomingFlights = flights.filter { !it.ended }
+                .sortedBy { LocalDateTime.parse(it.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) }
             previousFlights = flights.filter { it.ended }
+                .sortedByDescending { LocalDateTime.parse(it.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) }
         }
     }
 
