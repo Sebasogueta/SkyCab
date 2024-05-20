@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -35,7 +34,7 @@ val dummyIncomingFlights = {
     mutableListOf(
         Flight(
             flightId = "1",
-            pilotUsername = "PilotA",
+            pilotId = "PilotA",
             passengers = mutableListOf(dummyUser),
             totalSeats = 4,
             departureDateTime = LocalDateTime.of(2024, 6, 1, 14, 0).toString(),
@@ -47,7 +46,7 @@ val dummyIncomingFlights = {
         ),
         Flight(
             flightId = "2",
-            pilotUsername = "PilotB",
+            pilotId = "PilotB",
             passengers = mutableListOf(dummyUser),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0).toString(),
@@ -59,7 +58,7 @@ val dummyIncomingFlights = {
         ),
         Flight(
             flightId = "3",
-            pilotUsername = "PilotB",
+            pilotId = "PilotB",
             passengers = mutableListOf(dummyUser),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0).toString(),
@@ -71,7 +70,7 @@ val dummyIncomingFlights = {
         ),
         Flight(
             flightId = "4",
-            pilotUsername = "PilotB",
+            pilotId = "PilotB",
             passengers = mutableListOf(dummyUser),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 6, 2, 10, 0).toString(),
@@ -88,7 +87,7 @@ val dummyPreviousFlights = {
     mutableListOf(
         Flight(
             flightId = "5",
-            pilotUsername = "PilotC",
+            pilotId = "PilotC",
             passengers = mutableListOf(dummyUser),
             totalSeats = 4,
             departureDateTime = LocalDateTime.of(2024, 5, 1, 14, 0).toString(),
@@ -100,7 +99,7 @@ val dummyPreviousFlights = {
         ),
         Flight(
             flightId = "6",
-            pilotUsername = "PilotD",
+            pilotId = "PilotD",
             passengers = mutableListOf(dummyUser),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0).toString(),
@@ -112,7 +111,7 @@ val dummyPreviousFlights = {
         ),
         Flight(
             flightId = "7",
-            pilotUsername = "PilotD",
+            pilotId = "PilotD",
             passengers = mutableListOf(dummyUser),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0).toString(),
@@ -124,7 +123,7 @@ val dummyPreviousFlights = {
         ),
         Flight(
             flightId = "8",
-            pilotUsername = "PilotD",
+            pilotId = "PilotD",
             passengers = mutableListOf(dummyUser),
             totalSeats = 6,
             departureDateTime = LocalDateTime.of(2024, 4, 15, 10, 0).toString(),

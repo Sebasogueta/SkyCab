@@ -190,7 +190,7 @@ private fun FlightCard(flight: Flight, userViewModel: UserViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = flight.pilotUsername, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(text = flight.pilotId, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text(
                     text = flight.departureDateTime.toString(),
                     fontSize = 16.sp

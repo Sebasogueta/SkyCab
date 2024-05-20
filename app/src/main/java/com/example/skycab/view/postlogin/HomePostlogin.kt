@@ -36,7 +36,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -446,7 +445,7 @@ private fun FlightCard(flight: Flight, userViewModel: UserViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = flight.pilotUsername, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+                Text(text = flight.pilotId, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                 Text(
                     text = flight.departureDateTime.toString(),
                     fontSize = 16.sp
