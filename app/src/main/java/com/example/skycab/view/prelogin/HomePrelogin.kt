@@ -83,7 +83,7 @@ fun HomePreloginScreen(
             Spacer(modifier = Modifier.weight(1f))
         }
         Image(
-            painterResource(id = R.drawable.homephoto), /* TODO CAMBIAR FOTO */
+            painterResource(id = R.drawable.homephoto),
             contentDescription = "Home Photo",
             modifier = Modifier.size(500.dp)
         )

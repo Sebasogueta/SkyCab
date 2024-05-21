@@ -166,9 +166,9 @@ fun MyBottomNavigation(navController: NavHostController, userViewModel: UserView
                     Icon(
                         painter = painterResource(
                             id = if (selectedItem == "MyFlights") {
-                                R.drawable.filled_plane //cambiar por icono de avión relleno
+                                R.drawable.filled_plane
                             } else {
-                                R.drawable.outlined_plane // cambiar por icono de avion outlined
+                                R.drawable.outlined_plane 
                             }
                         ),
                         contentDescription = "MyFlights",
@@ -218,9 +218,9 @@ fun MyBottomNavigation(navController: NavHostController, userViewModel: UserView
                     Icon(
                         painter = painterResource(
                             id = if (selectedItem == "Search") {
-                                R.drawable.filled_search // cambiar por icono de busqueda filled
+                                R.drawable.filled_search
                             } else {
-                                R.drawable.outlined_search //cambiar por icono de busqueda outlined
+                                R.drawable.outlined_search
                             }
                         ),
                         contentDescription = "Search",
