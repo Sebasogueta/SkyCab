@@ -60,7 +60,7 @@ fun Register(
 
         OutlinedTextField(
             value = userInput,
-            onValueChange = { userInput = it },
+            onValueChange = { if(it.all { char -> char != ' ' }) userInput = it },
             label = {
                 Text("Username:")
             },

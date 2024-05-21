@@ -386,7 +386,11 @@ class UserViewModel : ViewModel() {
                 val flightsList = mutableListOf<Flight>()
                 for (document in querySnapshot.documents) {
                     document.toObject(Flight::class.java)?.let { flight ->
-                        flightsList.add(flight)
+                        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                        val departureDateTime = LocalDateTime.parse(flight.departureDateTime, formatter)
+                        if (departureDateTime.isAfter(LocalDateTime.now())) {
+                            flightsList.add(flight)
+                        }
                     }
                 }
                 callback(flightsList)
@@ -494,7 +498,7 @@ class UserViewModel : ViewModel() {
             }
     }
 
-    fun bookAFlight(flightId: String, result: (Boolean) -> Unit) {
+    fun buyFlightSeat(flightId: String, result: (Boolean) -> Unit) {
 
         val db = FirebaseFirestore.getInstance()
         val currentUser = auth.currentUser
@@ -579,7 +583,7 @@ class UserViewModel : ViewModel() {
         }
     }
 
-    fun unbookAFlight(flightId: String, result: (Boolean) -> Unit) {
+    fun cancelAFlight(flightId: String, result: (Boolean) -> Unit) {
 
         val db = FirebaseFirestore.getInstance()
         val currentUser = auth.currentUser
@@ -673,102 +677,6 @@ class UserViewModel : ViewModel() {
 
 }
 
-/*
-fun getFavoriteCities(callback: (MutableList<String>) -> Unit) {
-    val currentUser = this.auth.currentUser
-    currentUser?.let { firebaseUser ->
-        val userId = firebaseUser.uid
-        val db = FirebaseFirestore.getInstance()
-        val usersRef = db.collection("users")
-        val userDocument = usersRef.document(userId)
-        var favCities = mutableListOf<String>()
-
-
-        userDocument.get().addOnSuccessListener { documentSnapshot ->
-            if (documentSnapshot.exists()) {
-                val userData = documentSnapshot.toObject(User::class.java)
-                userData?.let { user ->
-                    favCities = user.favorites
-                    callback(favCities)
-                    // Actualización del estado de favoriteCities cuando se completa la operación
-                }
-            } else {
-                // El documento del usuario no existe
-            }
-            callback.invoke(favCities)
-        }.addOnFailureListener { e ->
-            // Manejo de errores al obtener el documento del usuario
-        }
-    }
-}
-
-fun removeFavorite(favoriteCities: MutableList<String>, favoriteCity: String, callback: (MutableList<String>) -> Unit){
-
-val db = FirebaseFirestore.getInstance()
-val currentUser = auth.currentUser
-
-if (currentUser != null) {
-    val usersRef = db.collection("users")
-    val userDocumentRef = usersRef.document(currentUser.uid)
-
-    userDocumentRef.get()
-        .addOnSuccessListener { documentSnapshot ->
-            if (documentSnapshot.exists()) {
-                val favoritesList = documentSnapshot.data!!["favorites"] as MutableList<String>
-                favoritesList.remove(favoriteCity)
-
-                val updatedMap = hashMapOf<String, Any>()
-                updatedMap["favorites"] = favoritesList
-
-                userDocumentRef.update(updatedMap)
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            Log.d("Firestore", "Favorites updated successfully")
-                            callback(favoritesList)
-                        } else {
-                            Log.e("Firestore", "Error updating favorites: ${task.exception}")
-                            callback(favoritesList)
-                        }
-                    }
-            }
-        }
-}
-}
-
-fun addFavorite(favoriteCities: MutableList<String>, favoriteCity: String, callback: (MutableList<String>) -> Unit){
-
-    val db = FirebaseFirestore.getInstance()
-    val currentUser = auth.currentUser
-
-    if (currentUser != null) {
-        val usersRef = db.collection("users")
-        val userDocumentRef = usersRef.document(currentUser.uid)
-
-        userDocumentRef.get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val favoritesList = documentSnapshot.data!!["favorites"] as MutableList<String>
-                    favoritesList.add(favoriteCity)
-
-                    val updatedMap = hashMapOf<String, Any>()
-                    updatedMap["favorites"] = favoritesList
-
-                    userDocumentRef.update(updatedMap)
-                        .addOnCompleteListener { task ->
-                            if (task.isSuccessful) {
-                                Log.d("Firestore", "Favorites updated successfully")
-                                callback(favoritesList)
-                            } else {
-                                Log.e("Firestore", "Error updating favorites: ${task.exception}")
-                                callback(favoritesList)
-                            }
-                        }
-                }
-            }
-    }
-}
-
- */
 
 
 

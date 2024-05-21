@@ -1,6 +1,5 @@
 package com.example.skycab.view.postlogin
 
-import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Context
 import android.widget.DatePicker
@@ -37,9 +36,8 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
+import java.util.Locale
 
-
-@SuppressLint("SimpleDateFormat")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Search(
@@ -123,11 +121,9 @@ fun Search(
             }
         }
 
-
-
-        val date1Format = SimpleDateFormat("dd-MM-yyyy")
-        val date2Format = SimpleDateFormat("yyyy-MM-dd")
-
+        val date1Format = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault())
+        val date2Format = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val departureDateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm", Locale.getDefault())
 
         Button(
             onClick = {
@@ -135,23 +131,30 @@ fun Search(
                 userViewModel.getFlights { fetchedFlights ->
                     flights = fetchedFlights
                     flightsFiltered = fetchedFlights
-                }
-                var formatedDate2 = ""
-                if(date.isNotEmpty()) {
-                    val formatedDate1 = date1Format.parse(date)
-                    formatedDate2 = date2Format.format(formatedDate1).toString()
-                }
-                // Update the flight list based on search criteria
-                flightsFiltered = flights.filter {
-                    it.departureAirport.contains(departureCity, ignoreCase = true) &&
-                            it.arrivalAirport.contains(destinationCity, ignoreCase = true) &&
-                            it.departureDateTime.contains(formatedDate2) /* TODO CAMBIAR */
+
+                    val formattedDate2 = if (date.isNotEmpty()) {
+                        val formattedDate1 = date1Format.parse(date)
+                        date2Format.format(formattedDate1)
+                    } else ""
+
+                    // Update the flight list based on search criteria
+                    flightsFiltered = flights.filter { flight ->
+                        val departureDate = departureDateTimeFormat.parse(flight.departureDateTime)
+                        val formattedDepartureDate = date2Format.format(departureDate)
+
+                        val matchesDepartureCity = departureCity.isEmpty() || flight.departureAirport.equals(departureCity, ignoreCase = true)
+                        val matchesDestinationCity = destinationCity.isEmpty() || flight.arrivalAirport.equals(destinationCity, ignoreCase = true)
+                        val matchesDate = date.isEmpty() || formattedDepartureDate == formattedDate2
+
+                        matchesDepartureCity && matchesDestinationCity && matchesDate
+                    }
                 }
             },
             modifier = Modifier.padding(vertical = 8.dp)
         ) {
             Text(text = "Search")
         }
+
         if (flightsFiltered.isEmpty() && !isFirstTime) {
             Text(
                 text = "No flights match your criteria.",
@@ -199,7 +202,8 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
     val departureDateTime = LocalDateTime.parse(flight.departureDateTime)
     val arrivalDateTime = LocalDateTime.parse(flight.arrivalDateTime)
     // Formato de fecha y hora
-    val departureDate = departureDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    val departureDate =
+        departureDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
     val departureTime = departureDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
     val arrivalTime = arrivalDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
 
@@ -257,8 +261,8 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
             ) {
                 Text(text = "${flight.price}€", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Button(onClick = {
-                    if(!booked) {
-                        userViewModel.bookAFlight(flight.flightId) { success ->
+                    if (!booked) {
+                        userViewModel.buyFlightSeat(flight.flightId) { success ->
                             if (success) {
                                 userViewModel.getFlight(flight.flightId) { updatedFlight ->
                                     flight = updatedFlight
@@ -269,7 +273,7 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
                             }
                         }
                     } else {
-                        userViewModel.unbookAFlight(flight.flightId) { success ->
+                        userViewModel.cancelAFlight(flight.flightId) { success ->
                             if (success) {
                                 userViewModel.getFlight(flight.flightId) { updatedFlight ->
                                     flight = updatedFlight
@@ -280,8 +284,9 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
                             }
                         }
 
-                    }                    }) {
-                    Text(text = if(booked) "Already booked!" else "Book now!")
+                    }
+                }) {
+                    Text(text = if (booked) "Cancel flight" else "Buy a seat!")
                 }
             }
         }

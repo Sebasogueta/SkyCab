@@ -523,7 +523,7 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
                 Text(text = "${flight.price}€", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Button(onClick = {
                     if (!booked) {
-                        userViewModel.bookAFlight(flight.flightId) { success ->
+                        userViewModel.buyFlightSeat(flight.flightId) { success ->
                             if (success) {
                                 userViewModel.getFlight(flight.flightId) { updatedFlight ->
                                     flight = updatedFlight
@@ -534,7 +534,7 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
                             }
                         }
                     } else {
-                        userViewModel.unbookAFlight(flight.flightId) { success ->
+                        userViewModel.cancelAFlight(flight.flightId) { success ->
                             if (success) {
                                 userViewModel.getFlight(flight.flightId) { updatedFlight ->
                                     flight = updatedFlight
@@ -547,7 +547,7 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
 
                     }
                 }) {
-                    Text(text = if (booked) "Already booked!" else "Book now!")
+                    Text(text = if (booked) "Cancel flight" else "Buy a seat!")
                 }
             }
         }

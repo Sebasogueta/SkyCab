@@ -304,7 +304,7 @@ fun FlightItem(flight1: Flight, navController: NavHostController, userViewModel:
             }
             IconButton(
                 onClick = {
-                    userViewModel.unbookAFlight(flight.flightId) { success ->
+                    userViewModel.cancelAFlight(flight.flightId) { success ->
                         if (success) {
                             userViewModel.getFlight(flight.flightId) { updatedFlight ->
                                 flight = updatedFlight
