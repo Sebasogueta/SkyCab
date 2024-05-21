@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.skycab.R
 import com.example.skycab.models.UserViewModel
-import com.example.skycab.ui.theme.FontTitle
+import com.example.skycab.ui.theme.FontHeader
 import com.example.skycab.ui.theme.text
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -41,7 +41,7 @@ fun Register(
 
     Column(
         modifier = Modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -50,14 +50,14 @@ fun Register(
         var passwordInput by remember { mutableStateOf("") }
         val context = LocalContext.current
 
+        Text(text = "Register", fontSize = 35.sp, modifier = Modifier.padding(16.dp), color = text, fontFamily = FontHeader)
+        Spacer(modifier = Modifier.weight(1f))
         Image(
             painterResource(id = R.drawable.homephoto),
             contentDescription = "Home Photo",
             modifier = Modifier.size(350.dp)
         )
-
-        Text(text = "Register", fontSize = 35.sp, modifier = Modifier.padding(16.dp), color = text, fontFamily = FontTitle)
-
+        Spacer(modifier = Modifier.weight(1f))
         OutlinedTextField(
             value = userInput,
             onValueChange = { if(it.all { char -> char != ' ' }) userInput = it },
@@ -138,6 +138,7 @@ fun Register(
                 Text(text = "Confirm")
             }
         }
+        Spacer(modifier = Modifier.weight(1f))
     }
 
 }

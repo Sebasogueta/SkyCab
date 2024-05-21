@@ -44,12 +44,12 @@ fun MyFlights(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(2f))
             Text(
                 text = "My Flights",
                 color = text,
                 fontSize = 35.sp,
-                fontFamily = FontTitle
+                fontFamily = FontHeader
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(
@@ -73,7 +73,7 @@ fun MyFlights(
 }
 
 @Composable
-fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewModel){
+fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewModel) {
     var flightsList by remember { mutableStateOf(listOf<Flight>()) }
     var incomingFlights by remember { mutableStateOf(listOf<Flight>()) }
     var previousFlights by remember { mutableStateOf(listOf<Flight>()) }
@@ -82,9 +82,19 @@ fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewMode
         userViewModel.getPilotFlights { flights ->
             flightsList = flights
             incomingFlights = flights.filter { !it.ended }
-                .sortedBy { LocalDateTime.parse(it.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) }
+                .sortedBy {
+                    LocalDateTime.parse(
+                        it.departureDateTime,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                    )
+                }
             previousFlights = flights.filter { it.ended }
-                .sortedByDescending { LocalDateTime.parse(it.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) }
+                .sortedByDescending {
+                    LocalDateTime.parse(
+                        it.departureDateTime,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                    )
+                }
         }
     }
 
@@ -102,29 +112,26 @@ fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewMode
             fontFamily = FontTitle,
             modifier = Modifier.align(Alignment.Start)
         )
-
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(top = 8.dp)
-        ) {
-            if (incomingFlights.isNotEmpty()) {
+        if (incomingFlights.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(top = 8.dp)
+            ) {
                 items(incomingFlights) { flight ->
                     FlightItem(flight, navController, userViewModel)
                 }
-            } else {
-                item {
-                    Text(
-                        text = "You have no incoming flights.",
-                        color = text,
-                        fontFamily = FontText,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
             }
+        } else {
+            Text(
+                text = "You have no incoming flights.",
+                color = text,
+                fontFamily = FontText,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -137,36 +144,33 @@ fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewMode
             modifier = Modifier.align(Alignment.Start)
         )
 
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1f)
-                .padding(top = 8.dp)
-        ) {
-            if (previousFlights.isNotEmpty()) {
+        if (previousFlights.isNotEmpty()) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .padding(top = 8.dp)
+            ) {
                 items(previousFlights) { flight ->
                     FlightItem(flight, navController, userViewModel)
                 }
-            } else {
-                item {
-                    Text(
-                        text = "You have no previous flights.",
-                        color = text,
-                        fontFamily = FontText,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
             }
+        }else {
+            Text(
+                text = "You have no previous flights.",
+                color = text,
+                fontFamily = FontText,
+                fontSize = 20.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
-
 }
 
 @SuppressLint("MutableCollectionMutableState")
 @Composable
-fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel){
+fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel) {
     var flightsList by remember { mutableStateOf(listOf<Flight>()) }
     var incomingFlights by remember { mutableStateOf(listOf<Flight>()) }
     var previousFlights by remember { mutableStateOf(listOf<Flight>()) }
@@ -175,9 +179,19 @@ fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel
         userViewModel.getUserFlights { flights ->
             flightsList = flights
             incomingFlights = flights.filter { !it.ended }
-                .sortedBy { LocalDateTime.parse(it.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) }
+                .sortedBy {
+                    LocalDateTime.parse(
+                        it.departureDateTime,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                    )
+                }
             previousFlights = flights.filter { it.ended }
-                .sortedByDescending { LocalDateTime.parse(it.departureDateTime, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) }
+                .sortedByDescending {
+                    LocalDateTime.parse(
+                        it.departureDateTime,
+                        DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")
+                    )
+                }
         }
     }
 
@@ -265,7 +279,8 @@ fun FlightItem(flight1: Flight, navController: NavHostController, userViewModel:
     val arrivalDateTime = LocalDateTime.parse(flight.arrivalDateTime)
 
     // Formato de fecha y hora
-    val departureDate = departureDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+    val departureDate =
+        departureDateTime.toLocalDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
     val departureTime = departureDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
     val arrivalTime = arrivalDateTime.toLocalTime().format(DateTimeFormatter.ofPattern("HH:mm"))
 
@@ -278,7 +293,7 @@ fun FlightItem(flight1: Flight, navController: NavHostController, userViewModel:
     ) {
         Row(
             modifier = Modifier.clickable(onClick = {
-                navController.navigate("FlightDetails/${flight.flightId}")
+                //navController.navigate("FlightDetails/${flight.flightId}")
             })
         ) {
             Column(

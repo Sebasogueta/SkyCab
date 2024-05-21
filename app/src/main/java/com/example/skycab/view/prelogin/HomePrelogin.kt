@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.skycab.R
 import com.example.skycab.models.UserViewModel
+import com.example.skycab.ui.theme.FontHeader
 import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
 
@@ -78,7 +79,7 @@ fun HomePreloginScreen(
                 fontSize = 35.sp,
                 modifier = Modifier.padding(16.dp),
                 color = text,
-                fontFamily = FontTitle
+                fontFamily = FontHeader
             )
             Spacer(modifier = Modifier.weight(1f))
         }

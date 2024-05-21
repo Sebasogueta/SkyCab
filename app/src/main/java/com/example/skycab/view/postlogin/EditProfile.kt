@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.skycab.models.UserViewModel
-import com.example.skycab.ui.theme.FontTitle
+import com.example.skycab.ui.theme.FontHeader
 import com.example.skycab.ui.theme.text
 import com.example.skycab.ui.theme.textfields
 
@@ -71,7 +71,7 @@ fun EditProfile(navController: NavController, userViewModel: UserViewModel) {
                 text = "Profile",
                 color = text,
                 fontSize = 35.sp,
-                fontFamily = FontTitle
+                fontFamily = FontHeader
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(

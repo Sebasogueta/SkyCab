@@ -30,7 +30,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.skycab.models.Flight
 import com.example.skycab.models.UserViewModel
-import com.example.skycab.ui.theme.FontTitle
+import com.example.skycab.ui.theme.FontHeader
 import com.example.skycab.ui.theme.text
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
@@ -64,13 +64,13 @@ fun Search(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.weight(2f))
             Text(
                 text = "Search a flight",
                 fontSize = 30.sp,
                 modifier = Modifier.padding(16.dp),
                 color = text,
-                fontFamily = FontTitle
+                fontFamily = FontHeader
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(

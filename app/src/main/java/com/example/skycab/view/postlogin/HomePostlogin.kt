@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -49,6 +50,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.skycab.models.Flight
 import com.example.skycab.models.UserViewModel
+import com.example.skycab.ui.theme.FontHeader
 import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
 import java.time.LocalDateTime
@@ -74,12 +76,20 @@ fun HomePostlogin(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            Icon(
+                imageVector = Icons.Default.AccountCircle,
+                contentDescription = "",
+                modifier = Modifier
+                    .size(35.dp)
+                    .align(Alignment.CenterVertically)
+                    .graphicsLayer(alpha = 0f)
+            )
             Spacer(modifier = Modifier.weight(1f))
             Text(
                 text = "SkyCab",
                 color = text,
                 fontSize = 35.sp,
-                fontFamily = FontTitle
+                fontFamily = FontHeader
             )
             Spacer(modifier = Modifier.weight(1f))
             Icon(
@@ -90,13 +100,26 @@ fun HomePostlogin(
                     .size(35.dp)
                     .align(Alignment.CenterVertically)
             )
+
         }
         if (isPilotView) {
+            Text(
+                text = "pilots",
+                color = text,
+                fontSize = 25.sp,
+                fontFamily = FontTitle
+            )
             HomePostLoginPilot(
                 navController = navController,
                 userViewModel = userViewModel
             )
         } else {
+            Text(
+                text = "users",
+                color = text,
+                fontSize = 25.sp,
+                fontFamily = FontTitle
+            )
             HomePostLoginUser(navController = navController, userViewModel = userViewModel)
         }
     }
@@ -105,7 +128,6 @@ fun HomePostlogin(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomePostLoginPilot(navController: NavController, userViewModel: UserViewModel) {
-    Text(text = "Welcome, pilot!")
 
     var departureAirport by remember { mutableStateOf("") }
     var arrivalAirport by remember { mutableStateOf("") }
@@ -440,7 +462,6 @@ fun HomePostLoginUser(
         }
     }
 
-    Text(text = "Welcome, user!")
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         state = rememberLazyListState(),

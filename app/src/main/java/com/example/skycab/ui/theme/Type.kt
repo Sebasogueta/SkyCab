@@ -34,11 +34,14 @@ val Typography = Typography(
     )
     */
 )
+val FontHeader = FontFamily(
+    Font(R.font.robotoslabextrabold)
+)
 
 val FontTitle = FontFamily(
-    Font(R.font.titlefont2)
+    Font(R.font.robotoslabsemibold)
 )
 
 val FontText = FontFamily(
-    Font(R.font.textfont)
+    Font(R.font.robotoregular)
 )
