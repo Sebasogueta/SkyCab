@@ -61,12 +61,21 @@ fun MyFlights(
                     .align(Alignment.CenterVertically)
             )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         if (isPilotView) {
+            Text(
+                text = "pilot",
+                color = text,
+                fontSize = 25.sp,
+                fontFamily = FontTitle
+            )
             MyFlightsPilot(navController = navController, userViewModel = userViewModel)
         } else {
+            Text(
+                text = "user",
+                color = text,
+                fontSize = 25.sp,
+                fontFamily = FontTitle
+            )
             MyFlightsUser(navController = navController, userViewModel = userViewModel)
         }
     }
@@ -120,7 +129,7 @@ fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewMode
                     .padding(top = 8.dp)
             ) {
                 items(incomingFlights) { flight ->
-                    FlightItem(flight, navController, userViewModel)
+                    FlightItem(flight, navController, userViewModel, true)
                 }
             }
         } else {
@@ -152,10 +161,10 @@ fun MyFlightsPilot(navController: NavHostController, userViewModel: UserViewMode
                     .padding(top = 8.dp)
             ) {
                 items(previousFlights) { flight ->
-                    FlightItem(flight, navController, userViewModel)
+                    FlightItem(flight, navController, userViewModel, true)
                 }
             }
-        }else {
+        } else {
             Text(
                 text = "You have no previous flights.",
                 color = text,
@@ -218,7 +227,7 @@ fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel
         ) {
             if (incomingFlights.isNotEmpty()) {
                 items(incomingFlights) { flight ->
-                    FlightItem(flight, navController, userViewModel)
+                    FlightItem(flight, navController, userViewModel, false)
                 }
             } else {
                 item {
@@ -252,7 +261,7 @@ fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel
         ) {
             if (previousFlights.isNotEmpty()) {
                 items(previousFlights) { flight ->
-                    FlightItem(flight, navController, userViewModel)
+                    FlightItem(flight, navController, userViewModel, false)
                 }
             } else {
                 item {
@@ -271,7 +280,12 @@ fun MyFlightsUser(navController: NavHostController, userViewModel: UserViewModel
 }
 
 @Composable
-fun FlightItem(flight1: Flight, navController: NavHostController, userViewModel: UserViewModel) {
+fun FlightItem(
+    flight1: Flight,
+    navController: NavHostController,
+    userViewModel: UserViewModel,
+    isInPilotView: Boolean
+) {
     var flight by remember { mutableStateOf(flight1) }
 
     // Convertir strings a LocalDateTime
@@ -317,26 +331,40 @@ fun FlightItem(flight1: Flight, navController: NavHostController, userViewModel:
                     fontSize = 19.sp
                 )
             }
-            IconButton(
-                onClick = {
-                    userViewModel.cancelAFlight(flight.flightId) { success ->
-                        if (success) {
-                            userViewModel.getFlight(flight.flightId) { updatedFlight ->
-                                flight = updatedFlight
+            if (!flight.ended) {
+                IconButton(
+                    onClick = if (isInPilotView) {
+                        {
+                            userViewModel.cancelFlight(flight.flightId) { success ->
+                                if (success) {
+                                    println("Correcto")
+                                } else {
+                                    println("fallo")
+                                }
                             }
-                        } else {
-                            println("fallo")
                         }
-                    }
-                },
-                modifier = Modifier.weight(1f)
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Close,
-                    contentDescription = "Remove flight",
-                    tint = Color.Red,
-                    modifier = Modifier.size(40.dp)
-                )
+                    } else {
+                        {
+                            userViewModel.cancelFlightSeat(flight.flightId) { success ->
+                                if (success) {
+                                    userViewModel.getFlight(flight.flightId) { updatedFlight ->
+                                        flight = updatedFlight
+                                    }
+                                } else {
+                                    println("fallo")
+                                }
+                            }
+                        }
+                    },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Remove flight",
+                        tint = Color.Red,
+                        modifier = Modifier.size(40.dp)
+                    )
+                }
             }
         }
     }

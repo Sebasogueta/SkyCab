@@ -145,8 +145,9 @@ fun Search(
                         val matchesDepartureCity = departureCity.isEmpty() || flight.departureAirport.equals(departureCity, ignoreCase = true)
                         val matchesDestinationCity = destinationCity.isEmpty() || flight.arrivalAirport.equals(destinationCity, ignoreCase = true)
                         val matchesDate = date.isEmpty() || formattedDepartureDate == formattedDate2
+                        val pilotIsNotCurrentUser = flight.pilotId != userId
 
-                        matchesDepartureCity && matchesDestinationCity && matchesDate
+                        matchesDepartureCity && matchesDestinationCity && matchesDate && pilotIsNotCurrentUser
                     }
                 }
             },
@@ -273,7 +274,7 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
                             }
                         }
                     } else {
-                        userViewModel.cancelAFlight(flight.flightId) { success ->
+                        userViewModel.cancelFlightSeat(flight.flightId) { success ->
                             if (success) {
                                 userViewModel.getFlight(flight.flightId) { updatedFlight ->
                                     flight = updatedFlight

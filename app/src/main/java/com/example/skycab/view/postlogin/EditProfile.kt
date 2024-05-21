@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.skycab.models.UserViewModel
 import com.example.skycab.ui.theme.FontHeader
+import com.example.skycab.ui.theme.FontTitle
 import com.example.skycab.ui.theme.text
 import com.example.skycab.ui.theme.textfields
 
@@ -95,13 +96,13 @@ fun EditProfile(navController: NavController, userViewModel: UserViewModel) {
         }
         // Toggle View
         if (isPilot) {
-            Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = if (isPilotView) "User is in Pilot View" else "User is in User View",
-                color = Color.DarkGray,
-                fontSize = 18.sp
+                text = if(isPilotView) "pilot" else "user",
+                color = text,
+                fontSize = 25.sp,
+                fontFamily = FontTitle
             )
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Button(
                 onClick = { userViewModel.changeView() },
                 modifier = Modifier.align(Alignment.CenterHorizontally)

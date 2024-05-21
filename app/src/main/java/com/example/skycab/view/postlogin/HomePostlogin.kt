@@ -104,7 +104,7 @@ fun HomePostlogin(
         }
         if (isPilotView) {
             Text(
-                text = "pilots",
+                text = "pilot",
                 color = text,
                 fontSize = 25.sp,
                 fontFamily = FontTitle
@@ -115,7 +115,7 @@ fun HomePostlogin(
             )
         } else {
             Text(
-                text = "users",
+                text = "user",
                 color = text,
                 fontSize = 25.sp,
                 fontFamily = FontTitle
@@ -453,12 +453,21 @@ fun HomePostLoginUser(
     userViewModel: UserViewModel
 ) {
     var flights by remember { mutableStateOf<List<Flight>>(emptyList()) }
+    var flightsFiltered by remember { mutableStateOf<List<Flight>>(emptyList()) }
     val userId by remember { mutableStateOf(userViewModel.getUserId()) }
+
 
     // Fetch flights when the composable is first displayed
     LaunchedEffect(Unit) {
         userViewModel.getFlights { fetchedFlights ->
             flights = fetchedFlights
+            flightsFiltered = fetchedFlights
+
+            // No mostrar vuelos creados por el usuario actual
+            flightsFiltered = flights.filter { flight ->
+                flight.pilotId != userId && flight.passengers.size < flight.totalSeats
+            }
+
         }
     }
 
@@ -468,8 +477,8 @@ fun HomePostLoginUser(
         contentPadding = PaddingValues(16.dp),
         reverseLayout = false,
     ) {
-        items(flights.size) { index ->
-            val flight = flights[index]
+        items(flightsFiltered.size) { index ->
+            val flight = flightsFiltered[index]
             FlightCard(flight, userViewModel, userId)
         }
     }
@@ -555,7 +564,7 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
                             }
                         }
                     } else {
-                        userViewModel.cancelAFlight(flight.flightId) { success ->
+                        userViewModel.cancelFlightSeat(flight.flightId) { success ->
                             if (success) {
                                 userViewModel.getFlight(flight.flightId) { updatedFlight ->
                                     flight = updatedFlight

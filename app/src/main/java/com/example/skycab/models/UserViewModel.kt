@@ -377,6 +377,40 @@ class UserViewModel : ViewModel() {
         }
     }
 
+    fun cancelFlight(flightId: String, result: (Boolean) -> Unit) {
+
+        val db = FirebaseFirestore.getInstance()
+        val currentUser = auth.currentUser
+
+        if (currentUser != null) {
+            val usersRef = db.collection("users")
+            val pilotDocumentRef = usersRef.document(currentUser.uid)
+            val flightsRef = db.collection("flights")
+            val flightDocumentRef = flightsRef.document(flightId)
+
+            flightDocumentRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val passengers1 = documentSnapshot.data!!["passengers"] as List<String>
+                        //Eliminar el flightid de la lista de vuelos de cada usuario
+                        for (passenger in passengers1) {
+                            usersRef.document(passenger).update("flightIds", FieldValue.arrayRemove(flightId))
+                        }
+                        pilotDocumentRef.update("pilotFlightIds", FieldValue.arrayRemove(flightId))
+                        //Eliminar documento del vuelo
+                        flightDocumentRef.delete()
+                            .addOnSuccessListener {
+                                result(true)
+                            }
+                            .addOnFailureListener { e ->
+                                result(false)
+                            }
+                    }
+                }
+        }
+        result(false)
+    }
+
     fun getFlights(callback: (List<Flight>) -> Unit) {
         val db = FirebaseFirestore.getInstance()
         val flightsRef = db.collection("flights")
@@ -583,7 +617,7 @@ class UserViewModel : ViewModel() {
         }
     }
 
-    fun cancelAFlight(flightId: String, result: (Boolean) -> Unit) {
+    fun cancelFlightSeat(flightId: String, result: (Boolean) -> Unit) {
 
         val db = FirebaseFirestore.getInstance()
         val currentUser = auth.currentUser
