@@ -17,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -287,6 +288,7 @@ fun FlightItem(
     isInPilotView: Boolean
 ) {
     var flight by remember { mutableStateOf(flight1) }
+    val context = LocalContext.current
 
     // Convertir strings a LocalDateTime
     val departureDateTime = LocalDateTime.parse(flight.departureDateTime)
@@ -335,7 +337,7 @@ fun FlightItem(
                 IconButton(
                     onClick = if (isInPilotView) {
                         {
-                            userViewModel.cancelFlight(flight.flightId) { success ->
+                            userViewModel.cancelFlight(flight.flightId, context) { success ->
                                 if (success) {
                                     println("Correcto")
                                 } else {

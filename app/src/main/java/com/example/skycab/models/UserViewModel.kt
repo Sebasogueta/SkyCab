@@ -3,6 +3,7 @@ package com.example.skycab.models
 import android.content.Context
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -377,7 +378,7 @@ class UserViewModel : ViewModel() {
         }
     }
 
-    fun cancelFlight(flightId: String, result: (Boolean) -> Unit) {
+    fun cancelFlight(flightId: String,context: Context, result: (Boolean) -> Unit) {
 
         val db = FirebaseFirestore.getInstance()
         val currentUser = auth.currentUser
@@ -401,9 +402,19 @@ class UserViewModel : ViewModel() {
                         flightDocumentRef.delete()
                             .addOnSuccessListener {
                                 result(true)
+                                Toast.makeText(
+                                    context,
+                                    "Flight canceled successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                             .addOnFailureListener { e ->
                                 result(false)
+                                Toast.makeText(
+                                    context,
+                                    "Something went wrong when the flight was cancelled",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                     }
                 }
@@ -532,7 +543,7 @@ class UserViewModel : ViewModel() {
             }
     }
 
-    fun buyFlightSeat(flightId: String, result: (Boolean) -> Unit) {
+    fun buyFlightSeat(flightId: String, context: Context, result: (Boolean) -> Unit) {
 
         val db = FirebaseFirestore.getInstance()
         val currentUser = auth.currentUser
@@ -554,7 +565,10 @@ class UserViewModel : ViewModel() {
                             val alreadyRegistered = passengers1.contains(currentUser.uid)
                             val userIsThePilot = currentUser.uid == documentSnapshot.data!!["pilotId"] as String
                             if (alreadyRegistered || userIsThePilot) {
-                                // TODO: Mostrar Toast - Ya registrado
+                                Toast.makeText(context,
+                                    "You are already in this flight!",
+                                    Toast.LENGTH_SHORT
+                                )
                                 result(false)
                             } else {
                                 // Agregar al usuario actual a la lista de pasajeros
@@ -564,7 +578,6 @@ class UserViewModel : ViewModel() {
                                 // Actualizar el documento en Firestore con la nueva lista de pasajeros
                                 flightDocumentRef.update("passengers", newPassengersList)
                                     .addOnSuccessListener {
-                                        // TODO: Mostrar Toast - Registro exitoso
                                         userDocumentRef.get()
                                             .addOnSuccessListener { documentSnapshot ->
                                                 if (documentSnapshot.exists()) {
@@ -580,6 +593,10 @@ class UserViewModel : ViewModel() {
                                                     )
                                                         .addOnCompleteListener { task ->
                                                             if (task.isSuccessful) {
+                                                                Toast.makeText(context,
+                                                                    "Your seat was successfully purchased, enjoy your trip!",
+                                                                    Toast.LENGTH_LONG
+                                                                )
                                                                 Log.d(
                                                                     "Firestore",
                                                                     "FlightIDs list updated"
@@ -598,7 +615,6 @@ class UserViewModel : ViewModel() {
                                                 }
                                             }
                                             .addOnFailureListener { e ->
-                                                // TODO: Manejar el fallo de la actualización
                                                 result(false)
                                             }
                                     }
@@ -611,7 +627,6 @@ class UserViewModel : ViewModel() {
 
                 }
                 .addOnFailureListener { e ->
-                    // TODO: Manejar el fallo
                     result(false)
                 }
         }
@@ -642,7 +657,7 @@ class UserViewModel : ViewModel() {
                                 // Actualizar el documento en Firestore con la nueva lista de pasajeros
                                 flightDocumentRef.update("passengers", newPassengersList)
                                     .addOnSuccessListener {
-                                        // TODO: Mostrar Toast - Actualización exitosa
+                                        // Actualización exitosa
                                         userDocumentRef.get()
                                             .addOnSuccessListener { documentSnapshot ->
                                                 if (documentSnapshot.exists()) {
@@ -676,7 +691,6 @@ class UserViewModel : ViewModel() {
                                                 }
                                             }
                                             .addOnFailureListener { e ->
-                                                // TODO: Manejar el fallo de la actualización
                                                 result(false)
                                             }
                                     }
@@ -689,7 +703,6 @@ class UserViewModel : ViewModel() {
 
                 }
                 .addOnFailureListener { e ->
-                    // TODO: Manejar el fallo
                     result(false)
                 }
         }
@@ -704,7 +717,6 @@ class UserViewModel : ViewModel() {
                 flight?.let { callback(it) }
             }
         }.addOnFailureListener { e ->
-            // Manejo de errores
             Log.e("Firestore", "Error getting flight", e)
         }
     }

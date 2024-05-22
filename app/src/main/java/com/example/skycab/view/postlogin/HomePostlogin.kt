@@ -488,6 +488,7 @@ fun HomePostLoginUser(
 private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: String) {
     var flight by remember { mutableStateOf(flight1) }
     var booked by remember { mutableStateOf(flight1.passengers.contains(userId)) }
+    val context = LocalContext.current
 
     // Convertir strings a LocalDateTime
     val departureDateTime = LocalDateTime.parse(flight.departureDateTime)
@@ -553,7 +554,7 @@ private fun FlightCard(flight1: Flight, userViewModel: UserViewModel, userId: St
                 Text(text = "${flight.price}€", fontSize = 16.sp, fontWeight = FontWeight.Bold)
                 Button(onClick = {
                     if (!booked) {
-                        userViewModel.buyFlightSeat(flight.flightId) { success ->
+                        userViewModel.buyFlightSeat(flight.flightId, context) { success ->
                             if (success) {
                                 userViewModel.getFlight(flight.flightId) { updatedFlight ->
                                     flight = updatedFlight
