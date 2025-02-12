@@ -1,6 +1,6 @@
 # SkyCab - Connecting Pilots and Passengers
 
-![SkyCab Logo](images/logo.png)
+![SkyCab Logo](images/skycab_logo.png)
 
 ## ✈️ Introduction
 SkyCab is an innovative platform designed to connect licensed pilots with aviation enthusiasts and travelers looking for unique flying experiences. The app allows pilots to accumulate flight hours while offering affordable air travel to users.
@@ -16,17 +16,19 @@ SkyCab is an innovative platform designed to connect licensed pilots with aviati
 ## 📱 App Screenshots
 
 ### Home Screen
-![Home Screen](images/home-screen.png)
+![Home Screen](images/home_screen.png)
 
 ### Login & Register
-![Login Screen](images/login-screen.png)
-![Register Screen](images/register-screen.png)
+![Login & Register Screen](images/login_register.png)
 
 ### Search Flights
-![Search Flights](images/search-screen.png)
+![Search Flights](images/search_screen.png)
 
 ### My Flights
-![My Flights](images/myflights-screen.png)
+![My Flights](images/myflights_screen.png)
+
+### Profile
+![Profile](images/profile_screen.png)
 
 ## 🔧 Technologies Used
 - **Frontend:** Kotlin (Jetpack Compose) for Android, Spring Boot (planned for web version).
